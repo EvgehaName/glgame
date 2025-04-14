@@ -8,6 +8,7 @@
 
 #include <QMouseEvent>
 #include <QCursor>
+#include <QTimer>
 
 #include "actor.h"
 
@@ -32,6 +33,7 @@ protected:
 
 private:
     Ui::Widget *ui;
+    QTimer * m_frameTimer;
     QOpenGLShaderProgram *m_program;
     GLuint m_vbo = 0;
     GLuint m_vao = 0;

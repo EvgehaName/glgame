@@ -6,6 +6,10 @@ Widget::Widget(QWidget *parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
+
+    m_frameTimer = new QTimer(this);
+    connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(update()));
+    m_frameTimer->start(1000 / 60.0f);
 }
 
 Widget::~Widget()
@@ -105,8 +109,6 @@ void Widget::paintGL()
     glDrawElements(GL_TRIANGLES, 30, GL_UNSIGNED_INT, 0);
 
     m_program->release();
-
-    update();
 }
 
 void Widget::setup()
