@@ -1,6 +1,8 @@
 #include "widget.h"
 #include "ui_widget.h"
 
+#include <QSysInfo>
+
 Widget::Widget(QWidget *parent)
     : QOpenGLWidget(parent)
     , ui(new Ui::Widget)
@@ -22,6 +24,16 @@ void Widget::initializeGL()
 {
     initializeOpenGLFunctions();
     glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
+
+    QSysInfo systemInfo;
+    printf("Kernel:\n");
+    printf("    Type: %s\n", systemInfo.kernelType().toStdString().c_str());
+    printf("    Version: %s\n", systemInfo.kernelVersion().toStdString().c_str());
+
+    printf("Product:\n");
+    printf("    Type: %s\n", systemInfo.productType().toStdString().c_str());
+    printf("    Name: %s\n", systemInfo.prettyProductName().toStdString().c_str());
+    printf("    Version: %s\n", systemInfo.productVersion().toStdString().c_str());
 
     m_program = new QOpenGLShaderProgram();
     m_program->addShaderFromSourceCode(QOpenGLShader::Vertex,
