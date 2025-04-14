@@ -21,6 +21,13 @@ Widget::~Widget()
 void Widget::initializeGL()
 {
     initializeOpenGLFunctions();
+
+    printf("GPU:\n");
+    printf("    Vendor: %s\n", glGetString(GL_VENDOR));
+    printf("    Device: %s\n", glGetString(GL_RENDERER));
+    printf("    OpenGL: %s\n", glGetString(GL_VERSION));
+    printf("    GLSL  : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+
     glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
 
     m_program = new QOpenGLShaderProgram();
