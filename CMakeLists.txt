@@ -9,15 +9,28 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-        main.cpp
-        widget.cpp
-        widget.h
-        widget.ui
+src/actor.cpp
+src/camera/camerabase.cpp
+src/camera/fpscamera.cpp
+
+headers/camera/camerabase.h
+headers/camera/fpscamera.h
+headers/actions.h
+headers/actor.h
+headers/constants.h
+
+main.cpp
+widget.h
+widget.cpp
+
+widget.ui
 )
+
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(glgame
@@ -42,6 +55,7 @@ else()
     endif()
 endif()
 
+target_include_directories(glgame PUBLIC headers)
 target_link_libraries(glgame PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
