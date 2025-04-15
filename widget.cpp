@@ -60,17 +60,16 @@ void Widget::initializeGL()
 
 
     float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.5f, -0.5f, -0.5f,  0.5f,  0.5f, -0.5f, -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,  0.5f, -0.5f,  0.5f,  0.5f,  0.5f,  0.5f, -0.5f,  0.5f,  0.5f
+        //x    //y   //z
+        -0.5f, 0.5f, 0.0f,  // нижняя правая точка
+        0.5f, 0.5f, 0.0f,   // верняя правая точка
+        0.5f, -0.5f, 0.0f,  // верхняя левая точка
+        -0.5f, -0.5f, 0.0f  // нижняя левая точка
     };
 
 
     GLuint indices[] = {
-        0, 1, 2,  2, 3, 0,  // зад
-        4, 5, 6,  6, 7, 4,  // перед
-        0, 4, 7,  7, 3, 0,  // лево
-        1, 5, 6,  6, 2, 1,  // право
-        0, 1, 5,  5, 4, 0   // низ
+        0, 3, 1, 3, 2, 1  // квадрат
     };
 
     glGenVertexArrays(1, &m_vao);
@@ -113,7 +112,7 @@ void Widget::paintGL()
     projection.perspective(45.0f, width() / float(height()), 0.1f, 100.0f);
 
     QMatrix4x4 view = m_actor->camera()->viewMatrix();
-    view.translate(0,0,0.0f);
+    view.translate(0,0,-3.0f);
     //qDebug() << view;
     //view.translate(0, 0, -3.0f);
 
@@ -125,7 +124,7 @@ void Widget::paintGL()
 
 
     glBindVertexArray(m_vao);
-    glDrawElements(GL_TRIANGLES, 30, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     m_program->release();
 }
