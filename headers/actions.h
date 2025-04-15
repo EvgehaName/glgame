@@ -17,4 +17,12 @@ enum class EDirectionType
     kHorizontal
 };
 
+enum class EGameAction
+{
+    kForwardStrafe,
+    kBackStrafe,
+    kLeftStrafe,
+    kRightStrafe
+};
+
 #endif // ACTIONS_H

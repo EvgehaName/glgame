@@ -7,8 +7,8 @@ class FPSCamera : public CameraBase
 public:
     FPSCamera();
 
-    void update() override;
     QMatrix4x4 viewMatrix() override;
+    virtual void update(const QVector3D& cameraPosition) override;
     void moveCamera(EDirection direction, float dFactor, float deltaTime) override;
 };
 
