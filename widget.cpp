@@ -61,10 +61,10 @@ void Widget::initializeGL()
 
     float vertices[] = {
         //x    //y   //z
-        -1.5f, 1.5f, 0.0f,  // нижняя правая точка
-        1.5f, 1.5f, 0.0f,   // верняя правая точка
-        1.5f, -1.5f, 0.0f,  // верхняя левая точка
-        -1.5f, -1.5f, 0.0f  // нижняя левая точка
+        -0.5f, 0.5f, 0.0f,  // нижняя правая точка
+        0.5f, 0.5f, 0.0f,   // верняя правая точка
+        0.5f, -0.5f, 0.0f,  // верхняя левая точка
+        -0.5f, -0.5f, 0.0f  // нижняя левая точка
     };
 
 
@@ -111,22 +111,18 @@ void Widget::paintGL()
     QMatrix4x4 projection;
     projection.perspective(45.0f, width() / float(height()), 0.1f, 100.0f);
 
-    QMatrix4x4 view; //= m_actor->camera()->viewMatrix();
-    view.translate(0,0,-25.0f);
+    QMatrix4x4 view = m_actor->camera()->viewMatrix();
+    view.translate(0,0,-2.0f);
     //qDebug() << view;
     //view.translate(0, 0, -3.0f);
-
+    // 
     // test
-    for (size_t i = 0; i <= 5; i++)
+    for (const auto& elem : elemPosition)
     {
-        QMatrix4x4 modelElem;
-        modelElem.translate(i * 3.1f,0.0f, 0.0f);
-        if(i > 2)
-        {
-            modelElem.translate(0.0f, 0.0f, i * 1.0f);
-            modelElem.rotate(i * 90.0f, 0.0f, 1.0f, 0.0f);
-        }
-        QMatrix4x4 mvp = projection * view * modelElem;
+        QMatrix4x4 model;
+        model.translate(elem.position);
+        model.rotate(elem.angle, elem.rotation.x(),elem.rotation.y(),elem.rotation.z());
+        QMatrix4x4 mvp = projection * view * model;
         m_program->setUniformValue("mvp", mvp);
         glBindVertexArray(m_vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);     
