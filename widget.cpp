@@ -121,13 +121,14 @@ void Widget::setup()
 
 void Widget::mouseMoveEvent(QMouseEvent *event)
 {
-    QPoint currentMousePos = event->pos();
+    int xpos = event->pos().x();
+    int ypos = event->pos().y();
 
-    int dx = currentMousePos.x() - m_lastMousePosition.x();
-    int dy = currentMousePos.y() - m_lastMousePosition.y();
+    int xoffset = xpos - m_lastMousePosition.x();
+    int yoffset = m_lastMousePosition.y() - ypos;
 
-    m_actor->onRotate(dx, dy);
-    m_lastMousePosition = currentMousePos;
+    m_actor->onRotate(xoffset, yoffset);
+    m_lastMousePosition = event->pos();
 }
 
 void Widget::keyPressEvent(QKeyEvent *event)
