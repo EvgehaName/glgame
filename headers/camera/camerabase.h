@@ -25,8 +25,8 @@ public:
 
     virtual void loadSection(const QString& section, QSettings& settings);
 
-    virtual void update() = 0;
     virtual QMatrix4x4 viewMatrix() = 0;
+    virtual void update(const QVector3D& cameraPosition) = 0;
     virtual void moveCamera(EDirection direction, float dFactor, float deltaTime) = 0;
 
 protected:

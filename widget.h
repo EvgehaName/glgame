@@ -7,6 +7,7 @@
 #include <QOpenGLShader>
 
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QCursor>
 #include <QTimer>
 
@@ -84,6 +85,7 @@ private:
     void setup();
 
 protected:
-    void mouseMoveEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 };
 #endif // WIDGET_H
