@@ -13,7 +13,26 @@ Actor::Actor()
     m_camera->loadSection("actor_cam", settings);
 }
 
-void Actor::onMouseMove(int dx, int dy)
+void Actor::onAction(EGameAction action)
+{
+    switch (action)
+    {
+        case EGameAction::kForwardStrafe:
+            m_position += { 0.0f, 0.0f, 0.1f};
+            break;
+        case EGameAction::kBackStrafe:
+            m_position += { 0.0f, 0.0f, -0.1f};
+            break;
+        case EGameAction::kLeftStrafe:
+            m_position += { -0.1f, 0.0f, 0.0f};
+            break;
+        case EGameAction::kRightStrafe:
+            m_position += { 0.1f, 0.0f, 0.0f};
+            break;
+    }
+}
+
+void Actor::onRotate(int dx, int dy)
 {
     float fx = static_cast<float>(dx);
     float fy = static_cast<float>(dy);
@@ -23,7 +42,6 @@ void Actor::onMouseMove(int dx, int dy)
     if (fx != 0) {
         const float dFactor = hDirectionFactor(fx, scale, false);
         EDirection dType = direction(EDirectionType::kHorizontal, dFactor);
-        qDebug() << static_cast<int>(dType);
         camera()->moveCamera(dType, std::fabs(dFactor), 16.f);
     }
 
@@ -32,6 +50,11 @@ void Actor::onMouseMove(int dx, int dy)
         EDirection dType = direction(EDirectionType::kVertical, dFactor);
         camera()->moveCamera(dType, std::fabs(dFactor), 16.f);
     }
+}
+
+void Actor::update()
+{
+    camera()->update(m_position);
 }
 
 CameraBase *Actor::camera()

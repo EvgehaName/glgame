@@ -102,7 +102,7 @@ void Widget::resizeGL(int width, int height)
 
 void Widget::paintGL()
 {
-    m_actor->camera()->update();
+    m_actor->update();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
@@ -145,6 +145,25 @@ void Widget::mouseMoveEvent(QMouseEvent *event)
     int dx = currentMousePos.x() - m_lastMousePosition.x();
     int dy = currentMousePos.y() - m_lastMousePosition.y();
 
-    m_actor->onMouseMove(dx, dy);
+    m_actor->onRotate(dx, dy);
     m_lastMousePosition = currentMousePos;
+}
+
+void Widget::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_W) {
+        m_actor->onAction(EGameAction::kForwardStrafe);
+    }
+
+    if (event->key() == Qt::Key_A) {
+        m_actor->onAction(EGameAction::kRightStrafe);
+    }
+
+    if (event->key() == Qt::Key_S) {
+        m_actor->onAction(EGameAction::kBackStrafe);
+    }
+
+    if (event->key() == Qt::Key_D) {
+        m_actor->onAction(EGameAction::kLeftStrafe);
+    }
 }

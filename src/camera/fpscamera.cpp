@@ -2,8 +2,19 @@
 
 FPSCamera::FPSCamera() {}
 
-void FPSCamera::update()
+QMatrix4x4 FPSCamera::viewMatrix()
 {
+    QMatrix4x4 m;
+    m.setToIdentity();
+    m.lookAt(m_vPosition, m_vPosition + m_vDirection, m_vUp);
+
+    return m;
+}
+
+void FPSCamera::update(const QVector3D &cameraPosition)
+{
+    m_vPosition = cameraPosition;
+
     QVector3D front;
     front.setX(std::cos(m_fYaw) * std::cos(m_fPitch));
     front.setY(std::sin(m_fPitch));
@@ -12,15 +23,6 @@ void FPSCamera::update()
     m_vDirection = front;
     m_vUp = QVector3D::crossProduct(right(), m_vDirection);
     m_vUp.normalize();
-}
-
-QMatrix4x4 FPSCamera::viewMatrix()
-{
-    QMatrix4x4 m;
-    m.setToIdentity();
-    m.lookAt(m_vPosition, m_vPosition + m_vDirection, m_vUp);
-
-    return m;
 }
 
 void FPSCamera::moveCamera(EDirection direction, float dFactor, float deltaTime)
