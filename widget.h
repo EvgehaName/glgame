@@ -43,6 +43,45 @@ private:
     Actor * m_actor;
     QPoint m_lastMousePosition;
 
+    struct PropertiesElem
+    {
+        QVector3D position;
+        float angle;
+        QVector3D rotation;
+        QVector3D scale;
+    };
+
+    std::vector<PropertiesElem> elemPosition {
+        // Стены
+        {QVector3D(0.0f,0.0f,0.0f), 0.0f, QVector3D(0.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // -*
+        {QVector3D(1.1f,0.0f,0.0f), 0.0f, QVector3D(0.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // --*
+        {QVector3D(2.2f,0.0f,0.0f), 0.0f, QVector3D(0.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // ---*
+        {QVector3D(2.7f,0.0f,0.6f), 90.0f, QVector3D(0.0f,1.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //    |*
+        {QVector3D(2.7f,0.0f,1.7f), 90.0f, QVector3D(0.0f,1.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //    |*
+        {QVector3D(2.7f,0.0f,2.8f), 90.0f, QVector3D(0.0f,1.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //    |*
+        {QVector3D(2.7f,0.0f,3.9f), 90.0f, QVector3D(0.0f,1.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //    |*
+        {QVector3D(2.2f,0.0f,4.5f), 0.0f, QVector3D(0.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // -*
+        {QVector3D(1.1f,0.0f,4.5f), 0.0f, QVector3D(0.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // --*
+        {QVector3D(0.0f,0.0f,4.5f), 0.0f, QVector3D(0.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // ---*
+        {QVector3D(-0.5f,0.0f,0.6f), 90.0f, QVector3D(0.0f,1.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // |*
+        {QVector3D(-0.5f,0.0f,1.7f), 90.0f, QVector3D(0.0f,1.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // |*
+        {QVector3D(-0.5f,0.0f,2.8f), 90.0f, QVector3D(0.0f,1.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // |*
+        {QVector3D(-0.5f,0.0f,3.9f), 90.0f, QVector3D(0.0f,1.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // |*
+        // Пол
+        {QVector3D(0.0f,-0.5f,0.6f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // |*
+        {QVector3D(0.0f,-0.5f,1.7f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // |*
+        {QVector3D(0.0f,-0.5f,2.8f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // |*
+        {QVector3D(0.0f,-0.5f,3.9f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, // |*
+        {QVector3D(1.1f,-0.5f,0.6f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //   |*
+        {QVector3D(1.1f,-0.5f,1.7f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //   |*
+        {QVector3D(1.1f,-0.5f,2.8f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //   |*
+        {QVector3D(1.1f,-0.5f,3.9f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //   |*
+        {QVector3D(2.2f,-0.5f,0.6f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //       |*
+        {QVector3D(2.2f,-0.5f,1.7f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //       |*
+        {QVector3D(2.2f,-0.5f,2.8f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //       |*
+        {QVector3D(2.2f,-0.5f,3.9f), 90.0f, QVector3D(1.0f,0.0f,0.0f), QVector3D(0.0f,0.0f,0.0f)}, //       |*
+    };
+
     void setup();
 
 protected:
