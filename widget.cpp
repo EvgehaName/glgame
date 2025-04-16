@@ -115,21 +115,13 @@ void Widget::paintGL()
     //qDebug() << view;
     //view.translate(0, 0, -3.0f);
     // 
-    // test
-    drawRoom(3,5, projection, view);
-    // for (const auto& elem : elemPosition)
-    // {
-    //     QMatrix4x4 model;
-    //     model.translate(elem.position);
-    //     model.rotate(elem.angle, elem.rotation.x(),elem.rotation.y(),elem.rotation.z());
-    //     QMatrix4x4 mvp = projection * view * model;
-    //     m_program->setUniformValue("mvp", mvp);
-    //     glBindVertexArray(m_vao);
-    //     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);     
-    // }
+
+    drawRoom(2,2, projection, view);
+
     m_program->release();
 }
-// test
+
+
 void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QMatrix4x4 view)
 {
     int countElement = (countHeight * 2) + (countWidht * 2);
@@ -138,44 +130,79 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         QMatrix4x4 model;
         if(i < countHeight)
         {
-            temp3D += QVector3D(1.1f,0.0f,0.0f);
-            elemPos.emplace_back(temp3D);
-            model.translate(elemPos.at(i));
+            tempPos3DWalls += QVector3D(1.1f,0.0f,0.0f);
+            elemPosWalls.emplace_back(tempPos3DWalls);
+            model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
         }
         else if(i > countHeight && i <= countWidht + countHeight)
         {
-            temp3D.setX(2.7f);
+            tempPos3DWalls.setX(elemPosWalls.at(countHeight).x() - 0.5f);
             if(i == countHeight + 1)
             {
-                temp3D += QVector3D(0.0f,0.0f,0.6f);
+                tempPos3DWalls += QVector3D(0.0f,0.0f,0.5f);
             }
             else
             {
-                temp3D += QVector3D(0.0f,0.0f,1.1f);
+                tempPos3DWalls += QVector3D(0.0f,0.0f,1.1f);
             }
-            elemPos.emplace_back(temp3D);
-            model.translate(elemPos.at(i).x(), elemPos.at(i).y(), elemPos.at(i).z());
+            elemPosWalls.emplace_back(tempPos3DWalls);
+            model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
             model.rotate(90.0f, 0.0f, 1.0f, 0.0f);
         }
-        else if(i > countWidht + countHeight)
+        else if(i > countWidht + countHeight && i <= countWidht + countHeight + countHeight)
         {
-            temp3D.setZ(5.0f);
-            if(i == countWidht + 1)
+            qDebug() << elemPosWalls.at(countWidht + countHeight).z();
+            tempPos3DWalls.setZ(elemPosWalls.at(countWidht + countHeight).z() + 0.5f);
+            if(i == countWidht + countHeight + 1)
             {
-                temp3D.setX(2.2f);
+                qDebug() << elemPosWalls.at(countWidht + countHeight).x();
+                tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight).x() - 0.6f);
             }
             else
             {
-                temp3D += QVector3D(-1.1f,0.0f,0.0f);
+                tempPos3DWalls += QVector3D(-1.1f,0.0f,0.0f);
             }
-            elemPos.emplace_back(temp3D);
-            model.translate(elemPos.at(i).x(), elemPos.at(i).y(), elemPos.at(i).z());
+            elemPosWalls.emplace_back(tempPos3DWalls);
+            model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
+        }
+        else if(i > countWidht + countHeight + countHeight)
+        {
+            tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight + countHeight).x() - 0.6f);
+            if(i == countWidht + countHeight + countHeight + 1)
+            {
+                tempPos3DWalls.setZ(elemPosWalls.at(countWidht + countHeight).z());
+            }
+            else
+            {
+                tempPos3DWalls += QVector3D(0.0f,0.0f,-1.1f);
+            }
+            elemPosWalls.emplace_back(tempPos3DWalls);
+            model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
+            model.rotate(90.0f, 0.0f, 1.0f,0.0f);
         }
         QMatrix4x4 mvp = projection * view * model;
         m_program->setUniformValue("mvp", mvp);
         glBindVertexArray(m_vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);     
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
+
+    // test
+    for (size_t i = 0; i <= countElement; i++)
+    {   
+        QMatrix4x4 model;
+        if(i < countHeight)
+        {
+            tempPos3DFloors += QVector3D(1.1f,0.0f,0.0f);
+            elemPosFloors.emplace_back(tempPos3DFloors);
+            model.translate(elemPosFloors.at(i).x(), elemPosFloors.at(i).y(), elemPosFloors.at(i).z());
+            model.rotate(90.0f, 1.0f,0.0f,0.0f);
+        }
+        QMatrix4x4 mvp = projection * view * model;
+        m_program->setUniformValue("mvp", mvp);
+        glBindVertexArray(m_vao);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    }
+    
 }
 
 void Widget::setup()
