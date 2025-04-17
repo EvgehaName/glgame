@@ -44,9 +44,8 @@ private:
     QPoint m_lastMousePosition;
 
     std::vector<QVector3D> elemPosWalls {QVector3D(0.0f,0.0f,0.0f)};
-    std::vector<QVector3D> elemPosFloors {QVector3D(0.0f,-0.5f,0.5f)};
     QVector3D tempPos3DWalls;
-    QVector3D tempPos3DFloors;
+    
     void drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QMatrix4x4 view);
 
     void setup();

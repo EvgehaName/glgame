@@ -112,11 +112,8 @@ void Widget::paintGL()
 
     QMatrix4x4 view = m_actor->camera()->viewMatrix();
     view.translate(0,0,-2.0f);
-    //qDebug() << view;
-    //view.translate(0, 0, -3.0f);
-    // 
 
-    drawRoom(2,2, projection, view);
+    drawRoom(2,4, projection, view);
 
     m_program->release();
 }
@@ -125,6 +122,7 @@ void Widget::paintGL()
 void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QMatrix4x4 view)
 {
     int countElement = (countHeight * 2) + (countWidht * 2);
+    // draw walls
     for (size_t i = 0; i <= countElement; i++)
     {
         QMatrix4x4 model;
@@ -186,23 +184,20 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
-    // test
-    for (size_t i = 0; i <= countElement; i++)
+    // draw floor
+    for (size_t i = 0; i < countHeight; i++)
     {   
-        QMatrix4x4 model;
-        if(i < countHeight)
+        for (size_t t = 0; t < countWidht; t++)
         {
-            tempPos3DFloors += QVector3D(1.1f,0.0f,0.0f);
-            elemPosFloors.emplace_back(tempPos3DFloors);
-            model.translate(elemPosFloors.at(i).x(), elemPosFloors.at(i).y(), elemPosFloors.at(i).z());
-            model.rotate(90.0f, 1.0f,0.0f,0.0f);
-        }
-        QMatrix4x4 mvp = projection * view * model;
-        m_program->setUniformValue("mvp", mvp);
-        glBindVertexArray(m_vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    }
-    
+            QMatrix4x4 model;
+            model.translate(i * 1.1f, -0.5f, 0.5f + t * 1.1f);
+            model.rotate(90.0f, 1.0f, 0.0f,0.0f);
+            QMatrix4x4 mvp = projection * view * model;
+            m_program->setUniformValue("mvp", mvp);
+            glBindVertexArray(m_vao);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        }        
+    }    
 }
 
 void Widget::setup()
