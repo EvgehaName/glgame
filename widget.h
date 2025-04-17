@@ -5,6 +5,7 @@
 #include <QOpenGLFunctions_4_3_Core>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLShader>
+#include <QOpenGLTexture>
 
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -42,6 +43,8 @@ private:
 
     Actor * m_actor;
     QPoint m_lastMousePosition;
+
+    QOpenGLTexture *texture;
 
     std::vector<QVector3D> elemPosWalls {QVector3D(0.0f,0.0f,0.0f)};
     QVector3D tempPos3DWalls;
