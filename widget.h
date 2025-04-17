@@ -43,6 +43,9 @@ private:
     Actor * m_actor;
     QPoint m_lastMousePosition;
 
+    int old_mouse_x;
+    int old_mouse_y;
+
     std::vector<QVector3D> elemPosWalls {QVector3D(0.0f,0.0f,0.0f)};
     QVector3D tempPos3DWalls;
     
@@ -50,8 +53,11 @@ private:
 
     void setup();
 
+    void mouseMove();
+    Q_SLOT void frameTick();
+
+
 protected:
-    void mouseMoveEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
 };
 #endif // WIDGET_H
