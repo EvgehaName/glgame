@@ -39,6 +39,7 @@ private:
     QOpenGLShaderProgram *m_program;
     GLuint m_vbo = 0;
     GLuint m_vao = 0;
+    GLuint m_ebo = 0;
     float m_angle = 0.0f;
 
     Actor * m_actor;
