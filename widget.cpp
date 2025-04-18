@@ -47,19 +47,8 @@ void Widget::initializeGL()
     printf("    Version: %s\n", systemInfo.productVersion().toStdString().c_str());
 
     m_program = new QOpenGLShaderProgram();
-    m_program->addShaderFromSourceCode(QOpenGLShader::Vertex,
-                                       "#version 330 core\n"
-                                       "layout(location = 0) in vec3 position;\n"
-                                       "layout(location = 1) in vec2 textureCoord;\n"
-                                       "out vec2 vTextureCoord;"
-                                       "uniform mat4 mvp;\n"
-                                       "void main() { gl_Position = mvp * vec4(position, 1.0); vTextureCoord = textureCoord;}");
-    m_program->addShaderFromSourceCode(QOpenGLShader::Fragment,
-                                       "#version 330 core\n"
-                                       "out vec4 fragColor;\n"
-                                       "in vec2 vTextureCoord;\n"
-                                       "uniform sampler2D textureSampler;\n"
-                                       "void main() { fragColor = texture(textureSampler, vTextureCoord); }");
+    m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, "vertexShader.glsl");
+    m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, "fragmentShader.glsl");
     m_program->link();
 
 
