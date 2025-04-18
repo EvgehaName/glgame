@@ -27,7 +27,7 @@ public:
 
     virtual QMatrix4x4 viewMatrix() = 0;
     virtual void update(const QVector3D& cameraPosition) = 0;
-    virtual void moveCamera(EDirection direction, float dFactor, float deltaTime) = 0;
+    virtual void moveCamera(EInputScreenDirection direction, float dFactor, float deltaTime) = 0;
 
 protected:
     QVector3D m_vUp;

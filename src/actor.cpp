@@ -13,21 +13,24 @@ Actor::Actor()
     m_camera->loadSection("actor_cam", settings);
 }
 
-void Actor::onAction(EGameAction action)
+void Actor::onAction(EMovementAction action, float deltaTime)
 {
+    const float acceleration = 0.005f;
+    const float coef = acceleration * deltaTime;
+
     switch (action)
     {
-        case EGameAction::kForwardStrafe:
-            m_position += { 0.0f, 0.0f, 0.1f};
+        case EMovementAction::kForwardStrafe:
+            m_position += m_camera->direction() * coef;
             break;
-        case EGameAction::kBackStrafe:
-            m_position += { 0.0f, 0.0f, -0.1f};
+        case EMovementAction::kBackStrafe:
+            m_position -= m_camera->direction() * coef;
             break;
-        case EGameAction::kLeftStrafe:
-            m_position += { -0.1f, 0.0f, 0.0f};
+        case EMovementAction::kLeftStrafe:
+            m_position += m_camera->right()     * coef;
             break;
-        case EGameAction::kRightStrafe:
-            m_position += { 0.1f, 0.0f, 0.0f};
+        case EMovementAction::kRightStrafe:
+            m_position -= m_camera->right()     * coef;
             break;
     }
 }
@@ -41,13 +44,13 @@ void Actor::onRotate(int dx, int dy)
 
     if (fx != 0) {
         const float dFactor = hDirectionFactor(fx, scale, false);
-        EDirection dType = direction(EDirectionType::kHorizontal, dFactor);
+        EInputScreenDirection dType = toScreenDirection(EInputAxis::Horizontal, dFactor);
         camera()->moveCamera(dType, std::fabs(dFactor), 16.f);
     }
 
     if (fy != 0) {
         float dFactor = vDirectionFactor(fy, scale, false);
-        EDirection dType = direction(EDirectionType::kVertical, dFactor);
+        EInputScreenDirection dType = toScreenDirection(EInputAxis::Vertical, dFactor);
         camera()->moveCamera(dType, std::fabs(dFactor), 16.f);
     }
 }
@@ -74,16 +77,16 @@ float Actor::vDirectionFactor(float y, float scaleY, bool invertY) const
     return factor;
 }
 
-EDirection Actor::direction(EDirectionType dType, float dFactor) const
+EInputScreenDirection Actor::toScreenDirection(EInputAxis axis, float value) const
 {
-    switch (dType) {
-        case EDirectionType::kVertical:
-            return (dFactor > 0) ? EDirection::kUp : EDirection::kDown;
-        case EDirectionType::kHorizontal:
-            return (dFactor < 0) ? EDirection::kLeft : EDirection::kRight;
+    switch (axis) {
+        case EInputAxis::Vertical:
+            return (value > 0) ? EInputScreenDirection::Up : EInputScreenDirection::Down;
+        case EInputAxis::Horizontal:
+            return (value < 0) ? EInputScreenDirection::Left : EInputScreenDirection::Right;
         default:
-            return EDirection::kNone;
+            Q_ASSERT_X(false, Q_FUNC_INFO, "Unknown input axis");
     }
 
-    return EDirection::kNone;
+    Q_UNREACHABLE();
 }

@@ -1,23 +1,21 @@
 #ifndef ACTIONS_H
 #define ACTIONS_H
 
-enum class EDirection
+enum class EInputScreenDirection
 {
-    kNone = -1,
-    kLeft,
-    kRight,
-    kUp,
-    kDown,
+    Left,
+    Right,
+    Up,
+    Down,
 };
 
-enum class EDirectionType
+enum class EInputAxis
 {
-    kNone = -1,
-    kVertical,
-    kHorizontal
+    Vertical,
+    Horizontal,
 };
 
-enum class EGameAction
+enum class EMovementAction
 {
     kForwardStrafe,
     kBackStrafe,

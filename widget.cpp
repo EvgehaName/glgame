@@ -259,18 +259,18 @@ void Widget::frameTick()
 void Widget::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_W) {
-        m_actor->onAction(EGameAction::kForwardStrafe);
+        m_actor->onAction(EMovementAction::kForwardStrafe, 16.0f);
     }
 
     if (event->key() == Qt::Key_A) {
-        m_actor->onAction(EGameAction::kRightStrafe);
+        m_actor->onAction(EMovementAction::kRightStrafe, 16.0f);
     }
 
     if (event->key() == Qt::Key_S) {
-        m_actor->onAction(EGameAction::kBackStrafe);
+        m_actor->onAction(EMovementAction::kBackStrafe, 16.0f);
     }
 
     if (event->key() == Qt::Key_D) {
-        m_actor->onAction(EGameAction::kLeftStrafe);
+        m_actor->onAction(EMovementAction::kLeftStrafe, 16.0f);
     }
 }
