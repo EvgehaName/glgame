@@ -49,17 +49,18 @@ void Actor::onRotate(int dx, int dy)
     float fy = static_cast<float>(dy);
 
     const float scale = (camera()->fov() / m_baseFov) * m_mouseSens * m_mouseSensScale / 50.f / m_lookFactor;
+    constexpr float eps = 0.0000001f;
 
-    if (fx != 0) {
-        const float dFactor = hDirectionFactor(fx, scale, false);
+    if (std::abs(fx) > eps) {
+        const float dFactor = hDirectionFactor(fx, scale, true);
         EInputScreenDirection dType = toScreenDirection(EInputAxis::Horizontal, dFactor);
-        camera()->moveCamera(dType, std::fabs(dFactor), 16.f);
+        camera()->moveCamera(dType, std::abs(dFactor), 16.f);
     }
 
-    if (fy != 0) {
+    if (std::abs(fy) > eps) {
         float dFactor = vDirectionFactor(fy, scale, false);
         EInputScreenDirection dType = toScreenDirection(EInputAxis::Vertical, dFactor);
-        camera()->moveCamera(dType, std::fabs(dFactor), 16.f);
+        camera()->moveCamera(dType, std::abs(dFactor), 16.f);
     }
 }
 
