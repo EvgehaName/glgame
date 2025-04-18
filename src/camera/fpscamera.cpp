@@ -60,10 +60,10 @@ void FPSCamera::moveCamera(EDirection direction, float dFactor, float deltaTime)
     }
 
     if (m_bClampYaw) {
-        std::clamp(m_fYaw, m_vLimYaw.x(), m_vLimYaw.y());
+        m_fYaw = std::clamp(m_fYaw, m_vLimYaw.x(), m_vLimYaw.y());
     }
 
     if (m_bClampPitch) {
-        std::clamp(m_fPitch, m_vLimPitch.x(), m_vLimPitch.y());
+        m_fPitch = std::clamp(m_fPitch, m_vLimPitch.x(), m_vLimPitch.y());
     }
 }
