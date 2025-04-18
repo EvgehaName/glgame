@@ -10,7 +10,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
     m_frameTimer = new QTimer(this);
-    connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(update()));
+    connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTick()));
     m_frameTimer->start(1000 / 60.0f);
 }
 
@@ -222,18 +222,38 @@ void Widget::setup()
     /* Для отслеживания мыши без удержания LMB */
     setMouseTracking(true);
 
+    /* Скрывает курсор (если поддерживается) */
+    setCursor(Qt::BlankCursor);
+
     m_actor = new Actor();
 }
 
-void Widget::mouseMoveEvent(QMouseEvent *event)
+void Widget::mouseMove()
 {
-    QPoint currentMousePos = event->pos();
+    /* Позиция курсора и центр окна в экранных координатах */
+    QPoint currentPos = QCursor::pos();
+    QPoint windowCenter = mapToGlobal(rect().center());
 
-    int dx = currentMousePos.x() - m_lastMousePosition.x();
-    int dy = currentMousePos.y() - m_lastMousePosition.y();
+    /* Смещение относительно центра */
+    int offsetx = currentPos.x() - windowCenter.x();
+    int offsety = currentPos.y() - windowCenter.y();
 
-    m_actor->onRotate(dx, dy);
-    m_lastMousePosition = currentMousePos;
+    if (!offsetx && !offsety)
+        return;
+
+    m_actor->onRotate(offsetx, offsety);
+
+    /* Центрируем курсор */
+    QCursor::setPos(windowCenter);
+}
+
+/* Вызывается каждый кадр */
+void Widget::frameTick()
+{
+    mouseMove();
+
+    /* OpenGL */
+    update();
 }
 
 void Widget::keyPressEvent(QKeyEvent *event)
