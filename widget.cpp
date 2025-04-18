@@ -49,9 +49,9 @@ void Widget::initializeGL()
     printf("    Version: %s\n", systemInfo.productVersion().toStdString().c_str());
 
     m_program = new QOpenGLShaderProgram();
-    m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, "vertexShader.glsl");
-    m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, "fragmentShader.glsl");
-    m_program->link();
+    m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vertexShader.glsl");
+    m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fragmentShader.glsl");
+    Q_ASSERT(m_program->link());
 
 
     float vertices[] = {
