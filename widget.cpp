@@ -76,7 +76,7 @@ void Widget::initializeGL()
         0, 3, 1, 3, 2, 1  // квадрат
     };
 
-    texture = new QOpenGLTexture(QImage("/home/piok/projects/glgame/tex.jpg").mirrored());
+    texture = new QOpenGLTexture(QImage(":/tex.jpg").mirrored());
     texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
     texture->setMagnificationFilter(QOpenGLTexture::Linear);
     texture->setWrapMode(QOpenGLTexture::Repeat);
