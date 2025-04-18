@@ -161,11 +161,20 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         }
         else if(i > countWidht + countHeight && i <= countWidht + countHeight + countHeight)
         {
+
+            //qDebug() << elemPosWalls.at(countWidht + countHeight).z();
+            tempPos3DWalls.setZ(elemPosWalls.at(countWidht + countHeight).z() + 0.5f);
+            if(i == countWidht + countHeight + 1)
+            {
+                //qDebug() << elemPosWalls.at(countWidht + countHeight).x();
+                tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight).x() - 0.6f);
+
             tempPos3DWalls.setZ(elemPosWalls.at(countWidht + countHeight).z() + 0.5f);
             if(i == countWidht + countHeight + 1)
             {
                 tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight).x() - 0.5f);
-            }
+
+            }ture_rendering
             else
             {
                 tempPos3DWalls += QVector3D(-1.0f,0.0f,0.0f);
@@ -256,18 +265,18 @@ void Widget::frameTick()
 void Widget::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_W) {
-        m_actor->onAction(EGameAction::kForwardStrafe);
+        m_actor->onAction(EMovementAction::kForwardStrafe, 16.0f);
     }
 
     if (event->key() == Qt::Key_A) {
-        m_actor->onAction(EGameAction::kRightStrafe);
+        m_actor->onAction(EMovementAction::kRightStrafe, 16.0f);
     }
 
     if (event->key() == Qt::Key_S) {
-        m_actor->onAction(EGameAction::kBackStrafe);
+        m_actor->onAction(EMovementAction::kBackStrafe, 16.0f);
     }
 
     if (event->key() == Qt::Key_D) {
-        m_actor->onAction(EGameAction::kLeftStrafe);
+        m_actor->onAction(EMovementAction::kLeftStrafe, 16.0f);
     }
 }

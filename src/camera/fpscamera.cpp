@@ -25,12 +25,8 @@ void FPSCamera::update(const QVector3D &cameraPosition)
     m_vUp.normalize();
 }
 
-void FPSCamera::moveCamera(EDirection direction, float dFactor, float deltaTime)
+void FPSCamera::moveCamera(EInputScreenDirection direction, float dFactor, float deltaTime)
 {
-    if (direction == EDirection::kNone) {
-        return;
-    }
-
     if (m_bClampPitch)
     {
         while (m_fPitch < m_vLimPitch.x()) {
@@ -43,27 +39,25 @@ void FPSCamera::moveCamera(EDirection direction, float dFactor, float deltaTime)
     };
 
     switch (direction) {
-        case EDirection::kNone:
-            break;
-        case EDirection::kLeft:
+        case EInputScreenDirection::Left:
             m_fYaw -= dFactor ? dFactor : (m_vRotSpeed.x() * deltaTime);
             break;
-        case EDirection::kRight:
+        case EInputScreenDirection::Right:
             m_fYaw += dFactor ? dFactor : (m_vRotSpeed.x() * deltaTime);
             break;
-        case EDirection::kUp:
+        case EInputScreenDirection::Up:
             m_fPitch += dFactor ? dFactor : (m_vRotSpeed.y() * deltaTime);
             break;
-        case EDirection::kDown:
+        case EInputScreenDirection::Down:
             m_fPitch -= dFactor ? dFactor : (m_vRotSpeed.y() * deltaTime);
             break;
     }
 
     if (m_bClampYaw) {
-        std::clamp(m_fYaw, m_vLimYaw.x(), m_vLimYaw.y());
+        m_fYaw = std::clamp(m_fYaw, m_vLimYaw.x(), m_vLimYaw.y());
     }
 
     if (m_bClampPitch) {
-        std::clamp(m_fPitch, m_vLimPitch.x(), m_vLimPitch.y());
+        m_fPitch = std::clamp(m_fPitch, m_vLimPitch.x(), m_vLimPitch.y());
     }
 }
