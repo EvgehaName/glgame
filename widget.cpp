@@ -10,7 +10,7 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
 
     m_frameTimer = new QTimer(this);
-    connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(update()));
+    connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTick()));
     m_frameTimer->start(1000 / 60.0f);
 }
 
@@ -19,6 +19,8 @@ Widget::~Widget()
     delete ui;
     makeCurrent();
     delete m_program;
+    textureMap["wall"]->destroy();
+    textureMap["floor"]->destroy();
     glDeleteBuffers(1, &m_vbo);
     glDeleteVertexArrays(1, &m_vao);
     doneCurrent();
@@ -47,30 +49,33 @@ void Widget::initializeGL()
     printf("    Version: %s\n", systemInfo.productVersion().toStdString().c_str());
 
     m_program = new QOpenGLShaderProgram();
-    m_program->addShaderFromSourceCode(QOpenGLShader::Vertex,
-                                       "#version 330 core\n"
-                                       "layout(location = 0) in vec3 position;\n"
-                                       "uniform mat4 mvp;\n"
-                                       "void main() { gl_Position = mvp * vec4(position, 1.0); }");
-    m_program->addShaderFromSourceCode(QOpenGLShader::Fragment,
-                                       "#version 330 core\n"
-                                       "out vec4 fragColor;\n"
-                                       "void main() { fragColor = vec4(0.8, 0.6, 0.2, 1.0); }");
+    m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, "vertexShader.glsl");
+    m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, "fragmentShader.glsl");
     m_program->link();
 
 
     float vertices[] = {
-        //x    //y   //z
-        -0.5f, 0.5f, 0.0f,  // нижняя правая точка
-        0.5f, 0.5f, 0.0f,   // верняя правая точка
-        0.5f, -0.5f, 0.0f,  // верхняя левая точка
-        -0.5f, -0.5f, 0.0f  // нижняя левая точка
+        //x    //y   //z    // uv
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,  // нижняя правая точка
+        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,   // верняя правая точка
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // верхняя левая точка
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f // нижняя левая точка
     };
 
 
     GLuint indices[] = {
         0, 3, 1, 3, 2, 1  // квадрат
     };
+
+    textureMap["wall"] = new QOpenGLTexture(QImage(":/textures/wall_basecolor.png").mirrored());
+    textureMap["wall"]->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    textureMap["wall"]->setMagnificationFilter(QOpenGLTexture::Linear);
+    textureMap["wall"]->setWrapMode(QOpenGLTexture::Repeat);
+
+    textureMap["floor"] = new QOpenGLTexture(QImage(":/textures/floor_basecolor.png").mirrored());
+    textureMap["floor"]->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    textureMap["floor"]->setMagnificationFilter(QOpenGLTexture::Linear);
+    textureMap["floor"]->setWrapMode(QOpenGLTexture::Repeat);
 
     glGenVertexArrays(1, &m_vao);
     glGenBuffers(1, &m_vbo);
@@ -85,8 +90,11 @@ void Widget::initializeGL()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -113,7 +121,7 @@ void Widget::paintGL()
     QMatrix4x4 view = m_actor->camera()->viewMatrix();
     view.translate(0,0,-2.0f);
 
-    drawRoom(2,4, projection, view);
+    drawRoom(2,4,projection, view);
 
     m_program->release();
 }
@@ -122,13 +130,17 @@ void Widget::paintGL()
 void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QMatrix4x4 view)
 {
     int countElement = (countHeight * 2) + (countWidht * 2);
+
+    textureMap["wall"]->bind(0);
+    m_program->setUniformValue("textureSampler", 0);
+
     // draw walls
     for (size_t i = 0; i <= countElement; i++)
     {
         QMatrix4x4 model;
         if(i < countHeight)
         {
-            tempPos3DWalls += QVector3D(1.1f,0.0f,0.0f);
+            tempPos3DWalls += QVector3D(1.0f,0.0f,0.0f);
             elemPosWalls.emplace_back(tempPos3DWalls);
             model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
         }
@@ -141,7 +153,7 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
             }
             else
             {
-                tempPos3DWalls += QVector3D(0.0f,0.0f,1.1f);
+                tempPos3DWalls += QVector3D(0.0f,0.0f,1.0f);
             }
             elemPosWalls.emplace_back(tempPos3DWalls);
             model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
@@ -149,30 +161,28 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         }
         else if(i > countWidht + countHeight && i <= countWidht + countHeight + countHeight)
         {
-            qDebug() << elemPosWalls.at(countWidht + countHeight).z();
             tempPos3DWalls.setZ(elemPosWalls.at(countWidht + countHeight).z() + 0.5f);
             if(i == countWidht + countHeight + 1)
             {
-                qDebug() << elemPosWalls.at(countWidht + countHeight).x();
-                tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight).x() - 0.6f);
+                tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight).x() - 0.5f);
             }
             else
             {
-                tempPos3DWalls += QVector3D(-1.1f,0.0f,0.0f);
+                tempPos3DWalls += QVector3D(-1.0f,0.0f,0.0f);
             }
             elemPosWalls.emplace_back(tempPos3DWalls);
             model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
         }
         else if(i > countWidht + countHeight + countHeight)
         {
-            tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight + countHeight).x() - 0.6f);
+            tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight + countHeight).x() - 0.5f);
             if(i == countWidht + countHeight + countHeight + 1)
             {
                 tempPos3DWalls.setZ(elemPosWalls.at(countWidht + countHeight).z());
             }
             else
             {
-                tempPos3DWalls += QVector3D(0.0f,0.0f,-1.1f);
+                tempPos3DWalls += QVector3D(0.0f,0.0f,-1.0f);
             }
             elemPosWalls.emplace_back(tempPos3DWalls);
             model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
@@ -180,9 +190,13 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         }
         QMatrix4x4 mvp = projection * view * model;
         m_program->setUniformValue("mvp", mvp);
+            
         glBindVertexArray(m_vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
+
+    textureMap["floor"]->bind(0);
+    m_program->setUniformValue("textureSampler", 0);
 
     // draw floor
     for (size_t i = 0; i < countHeight; i++)
@@ -190,14 +204,14 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         for (size_t t = 0; t < countWidht; t++)
         {
             QMatrix4x4 model;
-            model.translate(i * 1.1f, -0.5f, 0.5f + t * 1.1f);
+            model.translate(i * 1.0f, -0.5f, 0.5f + t * 1.0f);
             model.rotate(90.0f, 1.0f, 0.0f,0.0f);
             QMatrix4x4 mvp = projection * view * model;
             m_program->setUniformValue("mvp", mvp);
             glBindVertexArray(m_vao);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }        
-    }    
+    }
 }
 
 void Widget::setup()
@@ -205,18 +219,38 @@ void Widget::setup()
     /* Для отслеживания мыши без удержания LMB */
     setMouseTracking(true);
 
+    /* Скрывает курсор (если поддерживается) */
+    setCursor(Qt::BlankCursor);
+
     m_actor = new Actor();
 }
 
-void Widget::mouseMoveEvent(QMouseEvent *event)
+void Widget::mouseMove()
 {
-    QPoint currentMousePos = event->pos();
+    /* Позиция курсора и центр окна в экранных координатах */
+    QPoint currentPos = QCursor::pos();
+    QPoint windowCenter = mapToGlobal(rect().center());
 
-    int dx = currentMousePos.x() - m_lastMousePosition.x();
-    int dy = currentMousePos.y() - m_lastMousePosition.y();
+    /* Смещение относительно центра */
+    int offsetx = currentPos.x() - windowCenter.x();
+    int offsety = currentPos.y() - windowCenter.y();
 
-    m_actor->onRotate(dx, dy);
-    m_lastMousePosition = currentMousePos;
+    if (!offsetx && !offsety)
+        return;
+
+    m_actor->onRotate(offsetx, offsety);
+
+    /* Центрируем курсор */
+    QCursor::setPos(windowCenter);
+}
+
+/* Вызывается каждый кадр */
+void Widget::frameTick()
+{
+    mouseMove();
+
+    /* OpenGL */
+    update();
 }
 
 void Widget::keyPressEvent(QKeyEvent *event)
