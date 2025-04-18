@@ -19,6 +19,8 @@ Widget::~Widget()
     delete ui;
     makeCurrent();
     delete m_program;
+    textureMap["wall"]->destroy();
+    textureMap["floor"]->destroy();
     glDeleteBuffers(1, &m_vbo);
     glDeleteVertexArrays(1, &m_vao);
     doneCurrent();
@@ -65,10 +67,15 @@ void Widget::initializeGL()
         0, 3, 1, 3, 2, 1  // квадрат
     };
 
-    texture = new QOpenGLTexture(QImage(":/tex.jpg").mirrored());
-    texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    texture->setMagnificationFilter(QOpenGLTexture::Linear);
-    texture->setWrapMode(QOpenGLTexture::Repeat);
+    textureMap["wall"] = new QOpenGLTexture(QImage(":/textures/wall_basecolor.png").mirrored());
+    textureMap["wall"]->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    textureMap["wall"]->setMagnificationFilter(QOpenGLTexture::Linear);
+    textureMap["wall"]->setWrapMode(QOpenGLTexture::Repeat);
+
+    textureMap["floor"] = new QOpenGLTexture(QImage(":/textures/floor_basecolor.png").mirrored());
+    textureMap["floor"]->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    textureMap["floor"]->setMagnificationFilter(QOpenGLTexture::Linear);
+    textureMap["floor"]->setWrapMode(QOpenGLTexture::Repeat);
 
     glGenVertexArrays(1, &m_vao);
     glGenBuffers(1, &m_vbo);
@@ -114,7 +121,7 @@ void Widget::paintGL()
     QMatrix4x4 view = m_actor->camera()->viewMatrix();
     view.translate(0,0,-2.0f);
 
-    drawRoom(2,4, projection, view);
+    drawRoom(2,4,projection, view);
 
     m_program->release();
 }
@@ -124,7 +131,7 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
 {
     int countElement = (countHeight * 2) + (countWidht * 2);
 
-    texture->bind(0);
+    textureMap["wall"]->bind(0);
     m_program->setUniformValue("textureSampler", 0);
 
     // draw walls
@@ -133,7 +140,7 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         QMatrix4x4 model;
         if(i < countHeight)
         {
-            tempPos3DWalls += QVector3D(1.1f,0.0f,0.0f);
+            tempPos3DWalls += QVector3D(1.0f,0.0f,0.0f);
             elemPosWalls.emplace_back(tempPos3DWalls);
             model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
         }
@@ -146,7 +153,7 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
             }
             else
             {
-                tempPos3DWalls += QVector3D(0.0f,0.0f,1.1f);
+                tempPos3DWalls += QVector3D(0.0f,0.0f,1.0f);
             }
             elemPosWalls.emplace_back(tempPos3DWalls);
             model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
@@ -154,30 +161,28 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         }
         else if(i > countWidht + countHeight && i <= countWidht + countHeight + countHeight)
         {
-            qDebug() << elemPosWalls.at(countWidht + countHeight).z();
             tempPos3DWalls.setZ(elemPosWalls.at(countWidht + countHeight).z() + 0.5f);
             if(i == countWidht + countHeight + 1)
             {
-                qDebug() << elemPosWalls.at(countWidht + countHeight).x();
-                tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight).x() - 0.6f);
+                tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight).x() - 0.5f);
             }
             else
             {
-                tempPos3DWalls += QVector3D(-1.1f,0.0f,0.0f);
+                tempPos3DWalls += QVector3D(-1.0f,0.0f,0.0f);
             }
             elemPosWalls.emplace_back(tempPos3DWalls);
             model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
         }
         else if(i > countWidht + countHeight + countHeight)
         {
-            tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight + countHeight).x() - 0.6f);
+            tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight + countHeight).x() - 0.5f);
             if(i == countWidht + countHeight + countHeight + 1)
             {
                 tempPos3DWalls.setZ(elemPosWalls.at(countWidht + countHeight).z());
             }
             else
             {
-                tempPos3DWalls += QVector3D(0.0f,0.0f,-1.1f);
+                tempPos3DWalls += QVector3D(0.0f,0.0f,-1.0f);
             }
             elemPosWalls.emplace_back(tempPos3DWalls);
             model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
@@ -190,20 +195,23 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
+    textureMap["floor"]->bind(0);
+    m_program->setUniformValue("textureSampler", 0);
+
     // draw floor
     for (size_t i = 0; i < countHeight; i++)
     {   
         for (size_t t = 0; t < countWidht; t++)
         {
             QMatrix4x4 model;
-            model.translate(i * 1.1f, -0.5f, 0.5f + t * 1.1f);
+            model.translate(i * 1.0f, -0.5f, 0.5f + t * 1.0f);
             model.rotate(90.0f, 1.0f, 0.0f,0.0f);
             QMatrix4x4 mvp = projection * view * model;
             m_program->setUniformValue("mvp", mvp);
             glBindVertexArray(m_vao);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }        
-    }    
+    }
 }
 
 void Widget::setup()

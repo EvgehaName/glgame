@@ -47,7 +47,9 @@ private:
     int old_mouse_x;
     int old_mouse_y;
 
+    QMap<std::string, QOpenGLTexture*> textureMap;
     QOpenGLTexture *texture;
+    QOpenGLTexture *texture1;
 
     std::vector<QVector3D> elemPosWalls {QVector3D(0.0f,0.0f,0.0f)};
     QVector3D tempPos3DWalls;
