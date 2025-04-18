@@ -165,11 +165,11 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         }
         else if(i > countWidht + countHeight && i <= countWidht + countHeight + countHeight)
         {
-            qDebug() << elemPosWalls.at(countWidht + countHeight).z();
+            //qDebug() << elemPosWalls.at(countWidht + countHeight).z();
             tempPos3DWalls.setZ(elemPosWalls.at(countWidht + countHeight).z() + 0.5f);
             if(i == countWidht + countHeight + 1)
             {
-                qDebug() << elemPosWalls.at(countWidht + countHeight).x();
+                //qDebug() << elemPosWalls.at(countWidht + countHeight).x();
                 tempPos3DWalls.setX(elemPosWalls.at(countWidht + countHeight).x() - 0.6f);
             }
             else
