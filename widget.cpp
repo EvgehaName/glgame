@@ -50,27 +50,36 @@ void Widget::initializeGL()
     m_program->addShaderFromSourceCode(QOpenGLShader::Vertex,
                                        "#version 330 core\n"
                                        "layout(location = 0) in vec3 position;\n"
+                                       "layout(location = 1) in vec2 textureCoord;\n"
+                                       "out vec2 vTextureCoord;"
                                        "uniform mat4 mvp;\n"
-                                       "void main() { gl_Position = mvp * vec4(position, 1.0); }");
+                                       "void main() { gl_Position = mvp * vec4(position, 1.0); vTextureCoord = textureCoord;}");
     m_program->addShaderFromSourceCode(QOpenGLShader::Fragment,
                                        "#version 330 core\n"
                                        "out vec4 fragColor;\n"
-                                       "void main() { fragColor = vec4(0.8, 0.6, 0.2, 1.0); }");
+                                       "in vec2 vTextureCoord;\n"
+                                       "uniform sampler2D textureSampler;\n"
+                                       "void main() { fragColor = texture(textureSampler, vTextureCoord); }");
     m_program->link();
 
 
     float vertices[] = {
-        //x    //y   //z
-        -0.5f, 0.5f, 0.0f,  // нижняя правая точка
-        0.5f, 0.5f, 0.0f,   // верняя правая точка
-        0.5f, -0.5f, 0.0f,  // верхняя левая точка
-        -0.5f, -0.5f, 0.0f  // нижняя левая точка
+        //x    //y   //z    // uv
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,  // нижняя правая точка
+        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,   // верняя правая точка
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // верхняя левая точка
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f // нижняя левая точка
     };
 
 
     GLuint indices[] = {
         0, 3, 1, 3, 2, 1  // квадрат
     };
+
+    texture = new QOpenGLTexture(QImage("/home/piok/projects/glgame/tex.jpg").mirrored());
+    texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    texture->setMagnificationFilter(QOpenGLTexture::Linear);
+    texture->setWrapMode(QOpenGLTexture::Repeat);
 
     glGenVertexArrays(1, &m_vao);
     glGenBuffers(1, &m_vbo);
@@ -85,8 +94,11 @@ void Widget::initializeGL()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -122,6 +134,10 @@ void Widget::paintGL()
 void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QMatrix4x4 view)
 {
     int countElement = (countHeight * 2) + (countWidht * 2);
+
+    texture->bind(0);
+    m_program->setUniformValue("textureSampler", 0);
+
     // draw walls
     for (size_t i = 0; i <= countElement; i++)
     {
@@ -180,6 +196,7 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
         }
         QMatrix4x4 mvp = projection * view * model;
         m_program->setUniformValue("mvp", mvp);
+            
         glBindVertexArray(m_vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
