@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/">
+        <file>textures/wall_basecolor.png</file>
+        <file>textures/floor_basecolor.png</file>
+    </qresource>
+</RCC>
