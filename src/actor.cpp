@@ -15,32 +15,27 @@ Actor::Actor()
 
 void Actor::onAction(EMovementAction action, float deltaTime)
 {
-    float vertical   = 0;
-    float horizontal = 0;
+    QVector3D vAccel(0.f, 0.f, 0.f);
 
-    const float acceleration = 0.005f;
+    const float speed = 0.005f;
     // const float coef = acceleration * deltaTime;
 
-    switch (action)
-    {
-        case EMovementAction::kForwardStrafe:
-            vertical = 1.0f;
-            break;
-        case EMovementAction::kBackStrafe:
-            vertical = -1.0f;
-            break;
-        case EMovementAction::kLeftStrafe:
-            horizontal = 1.0f;
-            break;
-        case EMovementAction::kRightStrafe:
-            horizontal = -1.0f;
-            break;
+    // TODO: action bit mask
+    if (action == EMovementAction::kForwardStrafe) {
+        vAccel += { 0.0f, 0.0f, 1.0f };
+    }
+    if (action == EMovementAction::kBackStrafe) {
+        vAccel -= { 0.0f, 0.0f, 1.0f };
+    }
+    if (action == EMovementAction::kLeftStrafe) {
+        vAccel -= { 1.0f, 0.0f, 0.0f };
+    }
+    if (action == EMovementAction::kRightStrafe) {
+        vAccel += { 1.0f, 0.0f, 0.0f };
     }
 
-    QVector3D wishdir = camera()->direction() * vertical + camera()->right() * horizontal;
-    wishdir.normalize();
-
-    m_position += wishdir * acceleration * deltaTime;
+    // TODO: add orientation
+    m_position += vAccel * speed * deltaTime;
 }
 
 void Actor::onRotate(int dx, int dy)
