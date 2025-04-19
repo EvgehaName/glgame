@@ -31,10 +31,10 @@ void Widget::initializeGL()
     initializeOpenGLFunctions();
 
     printf("GPU:\n");
-    printf("    Vendor: %s\n", glGetString(GL_VENDOR));
-    printf("    Device: %s\n", glGetString(GL_RENDERER));
-    printf("    OpenGL: %s\n", glGetString(GL_VERSION));
-    printf("    GLSL  : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    printf("    Vendor: %s\n", glGetString(GL_VENDOR));
+    printf("    Device: %s\n", glGetString(GL_RENDERER));
+    printf("    OpenGL: %s\n", glGetString(GL_VERSION));
+    printf("    GLSL  : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
 
@@ -255,19 +255,25 @@ void Widget::frameTick()
 
 void Widget::keyPressEvent(QKeyEvent *event)
 {
+    int action = 0;
+
+    // TODO: action var should be accumulate all key pressed one time!
     if (event->key() == Qt::Key_W) {
-        m_actor->onAction(EMovementAction::kForwardStrafe, 16.0f);
+       action |= MOVEMENT_ACTION_FORWARD;
     }
 
     if (event->key() == Qt::Key_A) {
-        m_actor->onAction(EMovementAction::kRightStrafe, 16.0f);
+        action |= MOVEMENT_ACTION_RIGHT;
     }
 
     if (event->key() == Qt::Key_S) {
-        m_actor->onAction(EMovementAction::kBackStrafe, 16.0f);
+        action |= MOVEMENT_ACTION_BACK;
     }
 
     if (event->key() == Qt::Key_D) {
-        m_actor->onAction(EMovementAction::kLeftStrafe, 16.0f);
+        action |= MOVEMENT_ACTION_LEFT;
     }
+
+    qDebug() << "movement action:" << action;
+    m_actor->onAction(action, 16.0f);
 }

@@ -15,12 +15,16 @@ enum class EInputAxis
     Horizontal,
 };
 
-enum class EMovementAction
+/**
+ * NOTE: Простое перечисление, потому что enum class не поддерживает битовые операции
+ *
+ */
+enum EMovementAction
 {
-    kForwardStrafe,
-    kBackStrafe,
-    kLeftStrafe,
-    kRightStrafe
+    MOVEMENT_ACTION_FORWARD = 1 << 0,
+    MOVEMENT_ACTION_BACK    = 1 << 1,
+    MOVEMENT_ACTION_LEFT    = 1 << 2,
+    MOVEMENT_ACTION_RIGHT   = 1 << 3,
 };
 
 #endif // ACTIONS_H

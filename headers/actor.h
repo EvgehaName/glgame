@@ -8,7 +8,7 @@ class Actor
 public:
     Actor();
 
-    void onAction(EMovementAction action, float deltaTime);
+    void onAction(int action, float deltaTime);
     void onRotate(int dx, int dy);
     void update();
 
