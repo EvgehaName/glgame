@@ -248,6 +248,7 @@ void Widget::mouseMove()
 void Widget::frameTick()
 {
     mouseMove();
+    m_actor->onAction(m_movementState, 16.0f);
 
     /* OpenGL */
     update();
@@ -255,25 +256,38 @@ void Widget::frameTick()
 
 void Widget::keyPressEvent(QKeyEvent *event)
 {
-    int action = 0;
-
-    // TODO: action var should be accumulate all key pressed one time!
     if (event->key() == Qt::Key_W) {
-       action |= MOVEMENT_ACTION_FORWARD;
+       m_movementState.m_forward = true;
     }
 
     if (event->key() == Qt::Key_A) {
-        action |= MOVEMENT_ACTION_RIGHT;
+        m_movementState.m_right = true;
     }
 
     if (event->key() == Qt::Key_S) {
-        action |= MOVEMENT_ACTION_BACK;
+        m_movementState.m_back = true;
     }
 
     if (event->key() == Qt::Key_D) {
-        action |= MOVEMENT_ACTION_LEFT;
+        m_movementState.m_left = true;
+    }
+}
+
+void Widget::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_W) {
+       m_movementState.m_forward = false;
     }
 
-    qDebug() << "movement action:" << action;
-    m_actor->onAction(action, 16.0f);
+    if (event->key() == Qt::Key_A) {
+        m_movementState.m_right = false;
+    }
+
+    if (event->key() == Qt::Key_S) {
+        m_movementState.m_back = false;
+    }
+
+    if (event->key() == Qt::Key_D) {
+        m_movementState.m_left = false;
+    }
 }

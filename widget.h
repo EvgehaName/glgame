@@ -42,10 +42,7 @@ private:
     float m_angle = 0.0f;
 
     Actor * m_actor;
-    QPoint m_lastMousePosition;
-
-    int old_mouse_x;
-    int old_mouse_y;
+    MovementState m_movementState;
 
     QMap<std::string, QOpenGLTexture*> textureMap;
     QOpenGLTexture *texture;
@@ -64,5 +61,6 @@ private:
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
 };
 #endif // WIDGET_H

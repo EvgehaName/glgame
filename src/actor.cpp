@@ -13,25 +13,25 @@ Actor::Actor()
     m_camera->loadSection("actor_cam", settings);
 }
 
-void Actor::onAction(int action, float deltaTime)
+void Actor::onAction(const MovementState& state, float deltaTime)
 {
     QVector3D vAccel(0.f, 0.f, 0.f);
 
-    const float speed = 0.0035f;
+    const float speed = 0.0025f;
 
-    if (action & MOVEMENT_ACTION_FORWARD) {
+    if (state.m_forward) {
         vAccel += { 0.0f, 0.0f, 1.0f };
     }
 
-    if (action & MOVEMENT_ACTION_BACK) {
+    if (state.m_back) {
         vAccel -= { 0.0f, 0.0f, 1.0f };
     }
 
-    if (action & MOVEMENT_ACTION_LEFT) {
+    if (state.m_left) {
         vAccel -= { 1.0f, 0.0f, 0.0f };
     }
 
-    if (action & MOVEMENT_ACTION_RIGHT) {
+    if (state.m_right) {
         vAccel += { 1.0f, 0.0f, 0.0f };
     }
 
