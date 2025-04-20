@@ -17,7 +17,7 @@ void Actor::onAction(int action, float deltaTime)
 {
     QVector3D vAccel(0.f, 0.f, 0.f);
 
-    const float speed = 0.005f;
+    const float speed = 0.0035f;
 
     if (action & MOVEMENT_ACTION_FORWARD) {
         vAccel += { 0.0f, 0.0f, 1.0f };
