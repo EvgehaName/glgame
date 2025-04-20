@@ -2,6 +2,7 @@
 #include "ui_widget.h"
 
 #include <QSysInfo>
+#include "console_commands.h"
 
 Widget::Widget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -12,6 +13,9 @@ Widget::Widget(QWidget *parent)
     // https://stackoverflow.com/questions/35245917/cant-capture-qkeyevent-in-qopenglwidget
     setFocusPolicy(Qt::StrongFocus);
 
+    m_consoleWidget = new GameConsole(this);
+    m_consoleWidget->hide();
+
     m_frameTimer = new QTimer(this);
     connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTick()));
     m_frameTimer->start(1000 / 60.0f);
@@ -20,13 +24,6 @@ Widget::Widget(QWidget *parent)
 Widget::~Widget()
 {
     delete ui;
-    makeCurrent();
-    delete m_program;
-    textureMap["wall"]->destroy();
-    textureMap["floor"]->destroy();
-    glDeleteBuffers(1, &m_vbo);
-    glDeleteVertexArrays(1, &m_vao);
-    doneCurrent();
 }
 
 void Widget::initializeGL()
@@ -107,6 +104,7 @@ void Widget::initializeGL()
 void Widget::resizeGL(int width, int height)
 {
     glViewport(0,0, width, height);
+    m_consoleWidget->setGeometry(0, 0, width, height >> 1);
 }
 
 void Widget::paintGL()
@@ -225,6 +223,8 @@ void Widget::setup()
     /* Скрывает курсор (если поддерживается) */
     setCursor(Qt::BlankCursor);
 
+    m_consoleWidget->registerCommand<GameQuitCommand>("game_quit");
+
     m_actor = new Actor();
 }
 
@@ -257,8 +257,31 @@ void Widget::frameTick()
     update();
 }
 
+void Widget::closeEvent(QCloseEvent *event)
+{
+    makeCurrent();
+    delete m_program;
+
+    delete m_actor;
+
+    textureMap["wall"]->destroy();
+    textureMap["floor"]->destroy();
+    glDeleteBuffers(1, &m_vbo);
+    glDeleteVertexArrays(1, &m_vao);
+    doneCurrent();
+}
+
 void Widget::keyPressEvent(QKeyEvent *event)
 {
+    if (event->key() == Qt::Key_Escape) {
+        if (m_consoleWidget->isHidden()) {
+            m_consoleWidget->show();
+        } else {
+            m_consoleWidget->hide();
+        }
+    }
+
+
     if (event->key() == Qt::Key_W) {
        m_movementState.m_forward = true;
     }

@@ -31,6 +31,9 @@ main.cpp
 widget.h
 widget.cpp
 
+game_console.h
+game_console.cpp
+
 widget.ui
 resources.qrc
 )
@@ -38,6 +41,9 @@ resources.qrc
 
 add_executable(glgame
     ${PROJECT_SOURCES}
+
+    console_commands.h
+    console_commands.cpp
 )
 
 target_include_directories(glgame PUBLIC headers)

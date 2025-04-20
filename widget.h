@@ -13,6 +13,7 @@
 #include <QTimer>
 
 #include "actor.h"
+#include "game_console.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -42,6 +43,7 @@ private:
     float m_angle = 0.0f;
 
     Actor * m_actor;
+    GameConsole * m_consoleWidget;
     MovementState m_movementState;
 
     QMap<std::string, QOpenGLTexture*> textureMap;
@@ -60,6 +62,7 @@ private:
 
 
 protected:
+    void closeEvent(QCloseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
 };
