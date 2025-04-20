@@ -18,22 +18,32 @@ void Actor::onAction(int action, float deltaTime)
     QVector3D vAccel(0.f, 0.f, 0.f);
 
     const float speed = 0.005f;
-    // const float coef = acceleration * deltaTime;
 
     if (action & MOVEMENT_ACTION_FORWARD) {
         vAccel += { 0.0f, 0.0f, 1.0f };
     }
+
     if (action & MOVEMENT_ACTION_BACK) {
         vAccel -= { 0.0f, 0.0f, 1.0f };
     }
+
     if (action & MOVEMENT_ACTION_LEFT) {
         vAccel -= { 1.0f, 0.0f, 0.0f };
     }
+
     if (action & MOVEMENT_ACTION_RIGHT) {
         vAccel += { 1.0f, 0.0f, 0.0f };
     }
 
-    // TODO: add orientation
+    QMatrix4x4 R;
+    R.setToIdentity();
+    R.rotate(qRadiansToDegrees(m_camera->yaw()), {0.0f, 1.0f, 0.0f});
+
+#if QT_VERSION >= 0x060000
+    vAccel = R.map(vAccel);
+#else
+    vAccel = R * vAccel;
+#endif
     m_position += vAccel * speed * deltaTime;
 }
 
