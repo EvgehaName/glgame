@@ -9,6 +9,9 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // https://stackoverflow.com/questions/35245917/cant-capture-qkeyevent-in-qopenglwidget
+    setFocusPolicy(Qt::StrongFocus);
+
     m_frameTimer = new QTimer(this);
     connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTick()));
     m_frameTimer->start(1000 / 60.0f);
