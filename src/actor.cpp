@@ -35,6 +35,8 @@ void Actor::onAction(const MovementState& state, float deltaTime)
         vAccel += { 1.0f, 0.0f, 0.0f };
     }
 
+    vAccel.normalize();
+
     QMatrix4x4 R;
     R.setToIdentity();
     R.rotate(qRadiansToDegrees(m_camera->yaw()), {0.0f, 1.0f, 0.0f});
