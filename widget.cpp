@@ -260,7 +260,7 @@ void Widget::mouseMove()
 /* Вызывается каждый кадр */
 void Widget::frameTick()
 {
-    if (!hasFocus()) {
+    if (!hasFocus() && !m_consoleWidget->consoleHasFocus()) {
         return;
     }
 

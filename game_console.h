@@ -30,6 +30,7 @@ public:
 
     GameConsole(QWidget *parent = nullptr);
 
+    bool consoleHasFocus() const;
     void registerCommand(const QString& name, CommandCallback command);
     void executeCommand(const QString& argv);
 

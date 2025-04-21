@@ -44,6 +44,11 @@ GameConsole::GameConsole(QWidget *parent) : QWidget(parent)
     connect(pInputLineEdit, &QLineEdit::returnPressed, this, &GameConsole::executeCommandInternal);
 }
 
+bool GameConsole::consoleHasFocus() const
+{
+    return pInputLineEdit->hasFocus();
+}
+
 void GameConsole::registerCommand(const QString &name, CommandCallback command)
 {
     m_commands[name] = command;
