@@ -11,18 +11,18 @@ QMatrix4x4 FPSCamera::viewMatrix()
     return m;
 }
 
-void FPSCamera::update(const QVector3D &cameraPosition)
+void FPSCamera::update(const QVector3D &position)
 {
-    m_vPosition = cameraPosition;
+    m_vPosition = position;
 
-    QVector3D front;
-    front.setX(std::cos(m_fYaw) * std::cos(m_fPitch));
-    front.setY(std::sin(m_fPitch));
-    front.setZ(std::sin(m_fYaw) * std::cos(m_fPitch));
+    QMatrix4x4 M;
+    M.setToIdentity();
 
-    m_vDirection = front;
-    m_vUp = QVector3D::crossProduct(right(), m_vDirection);
-    m_vUp.normalize();
+    QQuaternion R = QQuaternion::fromEulerAngles(qRadiansToDegrees(m_fPitch), qRadiansToDegrees(m_fYaw), qRadiansToDegrees(m_fRoll));
+    M.rotate(R);
+
+    m_vDirection = M.column(2).toVector3D();
+    m_vUp        = M.column(1).toVector3D();
 }
 
 void FPSCamera::moveCamera(EInputScreenDirection direction, float dFactor, float deltaTime)
@@ -39,11 +39,11 @@ void FPSCamera::moveCamera(EInputScreenDirection direction, float dFactor, float
     };
 
     switch (direction) {
-        case EInputScreenDirection::Left:
-            m_fYaw -= dFactor ? dFactor : (m_vRotSpeed.x() * deltaTime);
-            break;
         case EInputScreenDirection::Right:
             m_fYaw += dFactor ? dFactor : (m_vRotSpeed.x() * deltaTime);
+            break;
+        case EInputScreenDirection::Left:
+            m_fYaw -= dFactor ? dFactor : (m_vRotSpeed.x() * deltaTime);
             break;
         case EInputScreenDirection::Up:
             m_fPitch += dFactor ? dFactor : (m_vRotSpeed.y() * deltaTime);

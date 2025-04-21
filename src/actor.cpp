@@ -13,34 +13,40 @@ Actor::Actor()
     m_camera->loadSection("actor_cam", settings);
 }
 
-void Actor::onAction(EMovementAction action, float deltaTime)
+void Actor::onAction(const MovementState& state, float deltaTime)
 {
-    float vertical   = 0;
-    float horizontal = 0;
+    QVector3D vAccel(0.f, 0.f, 0.f);
 
-    const float acceleration = 0.005f;
-    // const float coef = acceleration * deltaTime;
+    const float speed = 0.0025f;
 
-    switch (action)
-    {
-        case EMovementAction::kForwardStrafe:
-            vertical = 1.0f;
-            break;
-        case EMovementAction::kBackStrafe:
-            vertical = -1.0f;
-            break;
-        case EMovementAction::kLeftStrafe:
-            horizontal = 1.0f;
-            break;
-        case EMovementAction::kRightStrafe:
-            horizontal = -1.0f;
-            break;
+    if (state.m_forward) {
+        vAccel += { 0.0f, 0.0f, 1.0f };
     }
 
-    QVector3D wishdir = camera()->direction() * vertical + camera()->right() * horizontal;
-    wishdir.normalize();
+    if (state.m_back) {
+        vAccel -= { 0.0f, 0.0f, 1.0f };
+    }
 
-    m_position += wishdir * acceleration * deltaTime;
+    if (state.m_left) {
+        vAccel -= { 1.0f, 0.0f, 0.0f };
+    }
+
+    if (state.m_right) {
+        vAccel += { 1.0f, 0.0f, 0.0f };
+    }
+
+    vAccel.normalize();
+
+    QMatrix4x4 R;
+    R.setToIdentity();
+    R.rotate(qRadiansToDegrees(m_camera->yaw()), {0.0f, 1.0f, 0.0f});
+
+#if QT_VERSION >= 0x060000
+    vAccel = R.map(vAccel);
+#else
+    vAccel = R * vAccel;
+#endif
+    m_position += vAccel * speed * deltaTime;
 }
 
 void Actor::onRotate(int dx, int dy)
@@ -49,17 +55,18 @@ void Actor::onRotate(int dx, int dy)
     float fy = static_cast<float>(dy);
 
     const float scale = (camera()->fov() / m_baseFov) * m_mouseSens * m_mouseSensScale / 50.f / m_lookFactor;
+    constexpr float eps = 0.0000001f;
 
-    if (fx != 0) {
-        const float dFactor = hDirectionFactor(fx, scale, false);
+    if (std::abs(fx) > eps) {
+        const float dFactor = hDirectionFactor(fx, scale, true);
         EInputScreenDirection dType = toScreenDirection(EInputAxis::Horizontal, dFactor);
-        camera()->moveCamera(dType, std::fabs(dFactor), 16.f);
+        camera()->moveCamera(dType, std::abs(dFactor), 16.f);
     }
 
-    if (fy != 0) {
+    if (std::abs(fy) > eps) {
         float dFactor = vDirectionFactor(fy, scale, false);
         EInputScreenDirection dType = toScreenDirection(EInputAxis::Vertical, dFactor);
-        camera()->moveCamera(dType, std::fabs(dFactor), 16.f);
+        camera()->moveCamera(dType, std::abs(dFactor), 16.f);
     }
 }
 

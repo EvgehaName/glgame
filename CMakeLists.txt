@@ -9,15 +9,12 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+find_package(Qt6 COMPONENTS Core Widgets OpenGLWidgets)
+if (NOT Qt6_FOUND)
+  find_package(Qt5 5.15 REQUIRED COMPONENTS Core Widgets OpenGL)
+endif()
 
 find_package(OpenGL REQUIRED)
-if(Qt6_FOUND)
-    find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets OpenGL OpenGLWidgets)
-    find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGL OpenGLWidgets)
-else()
-    find_package(QT NAMES Qt5 REQUIRED COMPONENTS Widgets OpenGL)
-    find_package(Qt5 REQUIRED COMPONENTS Widgets OpenGL)
-endif()
 
 set(PROJECT_SOURCES
 src/actor.cpp
@@ -34,66 +31,32 @@ main.cpp
 widget.h
 widget.cpp
 
+game_console.h
+game_console.cpp
+
 widget.ui
 resources.qrc
 )
 
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(glgame
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET glgame APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(glgame SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(glgame
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
+add_executable(glgame
+    ${PROJECT_SOURCES}
+
+    console_commands.h
+    console_commands.cpp
+)
 
 target_include_directories(glgame PUBLIC headers)
-target_link_libraries(glgame
-    PRIVATE
-    Qt${QT_VERSION_MAJOR}::Widgets
-    Qt${QT_VERSION_MAJOR}::OpenGL
-    ${OPENGL_LIBRARIES}
-    )
+
 if(Qt6_FOUND)
     target_link_libraries(glgame PRIVATE Qt6::OpenGLWidgets)
 endif()
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.glgame)
-endif()
-set_target_properties(glgame PROPERTIES
-    ${BUNDLE_ID_OPTION}
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
+# https://www.qt.io/blog/versionless-cmake-targets-qt-5.15
+target_link_libraries(glgame
+    PRIVATE
+    Qt::Widgets
+    Qt::OpenGL
+    Qt::Core
+    ${OPENGL_LIBRARIES}
 )
-
-include(GNUInstallDirs)
-install(TARGETS glgame
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(glgame)
-endif()

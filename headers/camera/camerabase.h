@@ -15,6 +15,10 @@ class CameraBase
 public:
     CameraBase();
 
+    float yaw() const { return m_fYaw; }
+    float pitch() const { return m_fPitch; }
+    float roll() const { return m_fRoll; }
+
     const float& fov() const { return m_fFov; }
     const float& aspect() const { return m_fAspect; }
 

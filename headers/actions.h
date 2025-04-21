@@ -15,12 +15,14 @@ enum class EInputAxis
     Horizontal,
 };
 
-enum class EMovementAction
+struct MovementState
 {
-    kForwardStrafe,
-    kBackStrafe,
-    kLeftStrafe,
-    kRightStrafe
+    bool m_forward;
+    bool m_back;
+    bool m_left;
+    bool m_right;
+
+    explicit MovementState() : m_forward(false), m_back(false), m_left(false), m_right(false) {}
 };
 
 #endif // ACTIONS_H

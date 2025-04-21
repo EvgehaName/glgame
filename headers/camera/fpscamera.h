@@ -8,7 +8,7 @@ public:
     FPSCamera();
 
     QMatrix4x4 viewMatrix() override;
-    virtual void update(const QVector3D& cameraPosition) override;
+    virtual void update(const QVector3D& position) override;
     void moveCamera(EInputScreenDirection direction, float dFactor, float deltaTime) override;
 };
 
