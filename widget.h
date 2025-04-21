@@ -52,6 +52,8 @@ private:
 
     std::vector<QVector3D> elemPosWalls {QVector3D(0.0f,0.0f,0.0f)};
     QVector3D tempPos3DWalls;
+
+    QVector3D direction {QVector3D(1.2f,1.0f,1.5f)};
     
     void drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QMatrix4x4 view);
 

@@ -55,11 +55,11 @@ void Widget::initializeGL()
 
 
     float vertices[] = {
-        //x    //y   //z    // uv
-        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,  // нижняя правая точка
-        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,   // верняя правая точка
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // верхняя левая точка
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f // нижняя левая точка
+        //x    //y   //z    //normal          // uv
+        -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  // нижняя правая точка
+        0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   // верняя правая точка
+        0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // верхняя левая точка
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f // нижняя левая точка
     };
 
 
@@ -90,11 +90,17 @@ void Widget::initializeGL()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    // position
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    // normal
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    // uv
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -121,6 +127,17 @@ void Widget::paintGL()
 
     QMatrix4x4 view = m_actor->camera()->viewMatrix();
     view.translate(0,0,-2.0f);
+    
+    direction.normalize();
+    m_program->setUniformValue("uLightBase.direction", direction.x(), direction.y(), direction.z());
+
+    m_program->setUniformValue("uLightBase.ambient", 0.2f, 0.2f, 0.2f);
+    m_program->setUniformValue("uLightBase.diffuse", 1.3f, 1.3f, 0.3f);
+    m_program->setUniformValue("uLightBase.specular", 5.0f, 5.0f, 5.0f);
+
+    m_program->setUniformValue("uLightColor", 1.0f, 1.0f, 1.0f);
+
+    m_program->setUniformValue("uViewPos", view);
 
     drawRoom(2,4,projection, view);
 
@@ -133,7 +150,7 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
     int countElement = (countHeight * 2) + (countWidht * 2);
 
     textureMap["wall"]->bind(0);
-    m_program->setUniformValue("textureSampler", 0);
+    m_program->setUniformValue("uTextureSampler", 0);
 
     // draw walls
     for (size_t i = 0; i <= countElement; i++)
@@ -189,15 +206,16 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
             model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
             model.rotate(90.0f, 0.0f, 1.0f,0.0f);
         }
-        QMatrix4x4 mvp = projection * view * model;
-        m_program->setUniformValue("mvp", mvp);
-            
+        m_program->setUniformValue("uProjection", projection);
+        m_program->setUniformValue("uView", view);
+        m_program->setUniformValue("uModel", model);
+                    
         glBindVertexArray(m_vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
     textureMap["floor"]->bind(0);
-    m_program->setUniformValue("textureSampler", 0);
+    m_program->setUniformValue("uTextureSampler", 0);
 
     // draw floor
     for (size_t i = 0; i < countHeight; i++)
@@ -207,8 +225,9 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
             QMatrix4x4 model;
             model.translate(i * 1.0f, -0.5f, 0.5f + t * 1.0f);
             model.rotate(90.0f, 1.0f, 0.0f,0.0f);
-            QMatrix4x4 mvp = projection * view * model;
-            m_program->setUniformValue("mvp", mvp);
+            m_program->setUniformValue("uProjection", projection);
+            m_program->setUniformValue("uView", view);
+            m_program->setUniformValue("uModel", model);
             glBindVertexArray(m_vao);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }        
