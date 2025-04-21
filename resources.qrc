@@ -1,7 +1,8 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
+<RCC>
     <qresource prefix="/">
         <file>textures/wall_basecolor.png</file>
         <file>textures/floor_basecolor.png</file>
+        <file>fragmentShader.glsl</file>
+        <file>vertexShader.glsl</file>
     </qresource>
 </RCC>

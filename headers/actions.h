@@ -1,28 +1,28 @@
 #ifndef ACTIONS_H
 #define ACTIONS_H
 
-enum class EDirection
+enum class EInputScreenDirection
 {
-    kNone = -1,
-    kLeft,
-    kRight,
-    kUp,
-    kDown,
+    Left,
+    Right,
+    Up,
+    Down,
 };
 
-enum class EDirectionType
+enum class EInputAxis
 {
-    kNone = -1,
-    kVertical,
-    kHorizontal
+    Vertical,
+    Horizontal,
 };
 
-enum class EGameAction
+struct MovementState
 {
-    kForwardStrafe,
-    kBackStrafe,
-    kLeftStrafe,
-    kRightStrafe
+    bool m_forward;
+    bool m_back;
+    bool m_left;
+    bool m_right;
+
+    explicit MovementState() : m_forward(false), m_back(false), m_left(false), m_right(false) {}
 };
 
 #endif // ACTIONS_H

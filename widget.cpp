@@ -2,12 +2,19 @@
 #include "ui_widget.h"
 
 #include <QSysInfo>
+#include "console_commands.h"
 
 Widget::Widget(QWidget *parent)
     : QOpenGLWidget(parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
+
+    // https://stackoverflow.com/questions/35245917/cant-capture-qkeyevent-in-qopenglwidget
+    setFocusPolicy(Qt::StrongFocus);
+
+    m_consoleWidget = new GameConsole(this);
+    m_consoleWidget->hide();
 
     m_frameTimer = new QTimer(this);
     connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTick()));
@@ -17,13 +24,6 @@ Widget::Widget(QWidget *parent)
 Widget::~Widget()
 {
     delete ui;
-    makeCurrent();
-    delete m_program;
-    textureMap["wall"]->destroy();
-    textureMap["floor"]->destroy();
-    glDeleteBuffers(1, &m_vbo);
-    glDeleteVertexArrays(1, &m_vao);
-    doneCurrent();
 }
 
 void Widget::initializeGL()
@@ -31,10 +31,10 @@ void Widget::initializeGL()
     initializeOpenGLFunctions();
 
     printf("GPU:\n");
-    printf("    Vendor: %s\n", glGetString(GL_VENDOR));
-    printf("    Device: %s\n", glGetString(GL_RENDERER));
-    printf("    OpenGL: %s\n", glGetString(GL_VERSION));
-    printf("    GLSL  : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    printf("    Vendor: %s\n", glGetString(GL_VENDOR));
+    printf("    Device: %s\n", glGetString(GL_RENDERER));
+    printf("    OpenGL: %s\n", glGetString(GL_VERSION));
+    printf("    GLSL  : %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
 
@@ -49,9 +49,9 @@ void Widget::initializeGL()
     printf("    Version: %s\n", systemInfo.productVersion().toStdString().c_str());
 
     m_program = new QOpenGLShaderProgram();
-    m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, "vertexShader.glsl");
-    m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, "fragmentShader.glsl");
-    m_program->link();
+    m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vertexShader.glsl");
+    m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fragmentShader.glsl");
+    Q_ASSERT(m_program->link());
 
 
     float vertices[] = {
@@ -104,6 +104,7 @@ void Widget::initializeGL()
 void Widget::resizeGL(int width, int height)
 {
     glViewport(0,0, width, height);
+    m_consoleWidget->setGeometry(0, 0, width, height >> 1);
 }
 
 void Widget::paintGL()
@@ -222,6 +223,8 @@ void Widget::setup()
     /* Скрывает курсор (если поддерживается) */
     setCursor(Qt::BlankCursor);
 
+    m_consoleWidget->registerCommand<GameQuitCommand>("game_quit");
+
     m_actor = new Actor();
 }
 
@@ -248,26 +251,69 @@ void Widget::mouseMove()
 void Widget::frameTick()
 {
     mouseMove();
+    m_actor->onAction(m_movementState, 16.0f);
 
     /* OpenGL */
     update();
 }
 
+void Widget::closeEvent(QCloseEvent *event)
+{
+    makeCurrent();
+    delete m_program;
+
+    delete m_actor;
+
+    textureMap["wall"]->destroy();
+    textureMap["floor"]->destroy();
+    glDeleteBuffers(1, &m_vbo);
+    glDeleteVertexArrays(1, &m_vao);
+    doneCurrent();
+}
+
 void Widget::keyPressEvent(QKeyEvent *event)
 {
+    if (event->key() == Qt::Key_Escape) {
+        if (m_consoleWidget->isHidden()) {
+            m_consoleWidget->show();
+        } else {
+            m_consoleWidget->hide();
+        }
+    }
+
+
     if (event->key() == Qt::Key_W) {
-        m_actor->onAction(EGameAction::kForwardStrafe);
+       m_movementState.m_forward = true;
     }
 
     if (event->key() == Qt::Key_A) {
-        m_actor->onAction(EGameAction::kRightStrafe);
+        m_movementState.m_right = true;
     }
 
     if (event->key() == Qt::Key_S) {
-        m_actor->onAction(EGameAction::kBackStrafe);
+        m_movementState.m_back = true;
     }
 
     if (event->key() == Qt::Key_D) {
-        m_actor->onAction(EGameAction::kLeftStrafe);
+        m_movementState.m_left = true;
+    }
+}
+
+void Widget::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_W) {
+       m_movementState.m_forward = false;
+    }
+
+    if (event->key() == Qt::Key_A) {
+        m_movementState.m_right = false;
+    }
+
+    if (event->key() == Qt::Key_S) {
+        m_movementState.m_back = false;
+    }
+
+    if (event->key() == Qt::Key_D) {
+        m_movementState.m_left = false;
     }
 }

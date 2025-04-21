@@ -13,23 +13,40 @@ Actor::Actor()
     m_camera->loadSection("actor_cam", settings);
 }
 
-void Actor::onAction(EGameAction action)
+void Actor::onAction(const MovementState& state, float deltaTime)
 {
-    switch (action)
-    {
-        case EGameAction::kForwardStrafe:
-            m_position += { 0.0f, 0.0f, 0.1f};
-            break;
-        case EGameAction::kBackStrafe:
-            m_position += { 0.0f, 0.0f, -0.1f};
-            break;
-        case EGameAction::kLeftStrafe:
-            m_position += { -0.1f, 0.0f, 0.0f};
-            break;
-        case EGameAction::kRightStrafe:
-            m_position += { 0.1f, 0.0f, 0.0f};
-            break;
+    QVector3D vAccel(0.f, 0.f, 0.f);
+
+    const float speed = 0.0025f;
+
+    if (state.m_forward) {
+        vAccel += { 0.0f, 0.0f, 1.0f };
     }
+
+    if (state.m_back) {
+        vAccel -= { 0.0f, 0.0f, 1.0f };
+    }
+
+    if (state.m_left) {
+        vAccel -= { 1.0f, 0.0f, 0.0f };
+    }
+
+    if (state.m_right) {
+        vAccel += { 1.0f, 0.0f, 0.0f };
+    }
+
+    vAccel.normalize();
+
+    QMatrix4x4 R;
+    R.setToIdentity();
+    R.rotate(qRadiansToDegrees(m_camera->yaw()), {0.0f, 1.0f, 0.0f});
+
+#if QT_VERSION >= 0x060000
+    vAccel = R.map(vAccel);
+#else
+    vAccel = R * vAccel;
+#endif
+    m_position += vAccel * speed * deltaTime;
 }
 
 void Actor::onRotate(int dx, int dy)
@@ -38,17 +55,18 @@ void Actor::onRotate(int dx, int dy)
     float fy = static_cast<float>(dy);
 
     const float scale = (camera()->fov() / m_baseFov) * m_mouseSens * m_mouseSensScale / 50.f / m_lookFactor;
+    constexpr float eps = 0.0000001f;
 
-    if (fx != 0) {
-        const float dFactor = hDirectionFactor(fx, scale, false);
-        EDirection dType = direction(EDirectionType::kHorizontal, dFactor);
-        camera()->moveCamera(dType, std::fabs(dFactor), 16.f);
+    if (std::abs(fx) > eps) {
+        const float dFactor = hDirectionFactor(fx, scale, true);
+        EInputScreenDirection dType = toScreenDirection(EInputAxis::Horizontal, dFactor);
+        camera()->moveCamera(dType, std::abs(dFactor), 16.f);
     }
 
-    if (fy != 0) {
+    if (std::abs(fy) > eps) {
         float dFactor = vDirectionFactor(fy, scale, false);
-        EDirection dType = direction(EDirectionType::kVertical, dFactor);
-        camera()->moveCamera(dType, std::fabs(dFactor), 16.f);
+        EInputScreenDirection dType = toScreenDirection(EInputAxis::Vertical, dFactor);
+        camera()->moveCamera(dType, std::abs(dFactor), 16.f);
     }
 }
 
@@ -74,16 +92,16 @@ float Actor::vDirectionFactor(float y, float scaleY, bool invertY) const
     return factor;
 }
 
-EDirection Actor::direction(EDirectionType dType, float dFactor) const
+EInputScreenDirection Actor::toScreenDirection(EInputAxis axis, float value) const
 {
-    switch (dType) {
-        case EDirectionType::kVertical:
-            return (dFactor > 0) ? EDirection::kUp : EDirection::kDown;
-        case EDirectionType::kHorizontal:
-            return (dFactor < 0) ? EDirection::kLeft : EDirection::kRight;
+    switch (axis) {
+        case EInputAxis::Vertical:
+            return (value > 0) ? EInputScreenDirection::Up : EInputScreenDirection::Down;
+        case EInputAxis::Horizontal:
+            return (value < 0) ? EInputScreenDirection::Left : EInputScreenDirection::Right;
         default:
-            return EDirection::kNone;
+            Q_ASSERT_X(false, Q_FUNC_INFO, "Unknown input axis");
     }
 
-    return EDirection::kNone;
+    Q_UNREACHABLE();
 }

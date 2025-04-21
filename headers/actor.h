@@ -8,7 +8,7 @@ class Actor
 public:
     Actor();
 
-    void onAction(EGameAction action);
+    void onAction(const MovementState& state, float deltaTime);
     void onRotate(int dx, int dy);
     void update();
 
@@ -16,7 +16,7 @@ public:
 
     float hDirectionFactor(float x, float scaleX, bool invertX) const;
     float vDirectionFactor(float y, float scaleY, bool invertY) const;
-    EDirection direction(EDirectionType dType, float dFactor) const;
+    EInputScreenDirection toScreenDirection(EInputAxis axis, float value) const;
 
 private:
     float m_baseFov = 67.5f;

@@ -15,6 +15,10 @@ class CameraBase
 public:
     CameraBase();
 
+    float yaw() const { return m_fYaw; }
+    float pitch() const { return m_fPitch; }
+    float roll() const { return m_fRoll; }
+
     const float& fov() const { return m_fFov; }
     const float& aspect() const { return m_fAspect; }
 
@@ -27,7 +31,7 @@ public:
 
     virtual QMatrix4x4 viewMatrix() = 0;
     virtual void update(const QVector3D& cameraPosition) = 0;
-    virtual void moveCamera(EDirection direction, float dFactor, float deltaTime) = 0;
+    virtual void moveCamera(EInputScreenDirection direction, float dFactor, float deltaTime) = 0;
 
 protected:
     QVector3D m_vUp;
