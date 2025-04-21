@@ -260,6 +260,10 @@ void Widget::mouseMove()
 /* Вызывается каждый кадр */
 void Widget::frameTick()
 {
+    if (!hasFocus()) {
+        return;
+    }
+
     mouseMove();
     m_actor->onAction(m_movementState, 16.0f);
 
