@@ -223,7 +223,17 @@ void Widget::setup()
     /* Скрывает курсор (если поддерживается) */
     setCursor(Qt::BlankCursor);
 
-    m_consoleWidget->registerCommand<GameQuitCommand>("game_quit");
+    m_consoleWidget->registerCommand("quit", [](const CCommand& cmd) {
+        QApplication::quit();
+    });
+
+    m_consoleWidget->registerCommand("r_fullscreen", [&](const CCommand& cmd) {
+        if (cmd.argv(1) == "1") {
+            setWindowState(Qt::WindowFullScreen);
+        } else if (cmd.argv(1) == "0") {
+            setWindowState(Qt::WindowNoState);
+        }
+    });
 
     m_actor = new Actor();
 }
@@ -273,7 +283,8 @@ void Widget::closeEvent(QCloseEvent *event)
 
 void Widget::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Escape) {
+    /* Скрытие или показ окна консоли */
+    if (event->key() == Qt::Key_QuoteLeft) {
         if (m_consoleWidget->isHidden()) {
             m_consoleWidget->show();
         } else {

@@ -26,17 +26,12 @@ public:
         Warning
     };
 
+    using CommandCallback = std::function<void(const CCommand&)>;
+
     GameConsole(QWidget *parent = nullptr);
 
-    void registerCommand(const QString& name, IConsoleCommand* cmd);
-
-    template<typename T>
-    void registerCommand(const QString& name)
-    {
-        m_commands[name] = std::make_unique<T>();
-    }
-
-    void executeCommand(const QString& name);
+    void registerCommand(const QString& name, CommandCallback command);
+    void executeCommand(const QString& argv);
 
     void log(const QString& message, LogLevel level = LogLevel::Info);
     void debug(const QString &message) { log(message, LogLevel::Debug); }
@@ -46,12 +41,13 @@ public:
 
 protected:
     void showEvent(QShowEvent *event) override;
+    bool eventFilter(QObject *target, QEvent *event) override;
 
 private:
     QTextEdit * pOutputTextEdit = nullptr;
     QLineEdit * pInputLineEdit = nullptr;
-    std::unordered_map<QString, std::unique_ptr<IConsoleCommand>> m_commands;
 
+    std::unordered_map<QString, CommandCallback> m_commands;
     Q_SLOT void executeCommandInternal();
 };
 

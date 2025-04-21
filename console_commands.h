@@ -1,15 +1,19 @@
 #ifndef CONSOLE_COMMANDS_H
 #define CONSOLE_COMMANDS_H
 
-class IConsoleCommand {
-public:
-    virtual void Execute() = 0;
-    virtual ~IConsoleCommand() = default;
-};
+#include <QString>
+#include <QStringList>
 
-class GameQuitCommand : public IConsoleCommand {
+class CCommand
+{
 public:
-    void Execute();
+    CCommand(const QString& argv);
+
+    int argc() const;
+    QString argv(int index) const;
+
+protected:
+    QStringList m_argv;
 };
 
 #endif // CONSOLE_COMMANDS_H
