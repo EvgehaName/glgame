@@ -126,18 +126,17 @@ void Widget::paintGL()
     projection.perspective(45.0f, width() / float(height()), 0.1f, 100.0f);
 
     QMatrix4x4 view = m_actor->camera()->viewMatrix();
-    view.translate(0,0,-2.0f);
+    view.translate(0.0f,-0.3f,-2.0f);
     
     direction.normalize();
     m_program->setUniformValue("uLightBase.direction", direction.x(), direction.y(), direction.z());
 
-    m_program->setUniformValue("uLightBase.ambient", 0.2f, 0.2f, 0.2f);
+    m_program->setUniformValue("uLightBase.ambient", 0.5f, 0.5f, 0.5f);
     m_program->setUniformValue("uLightBase.diffuse", 1.3f, 1.3f, 0.3f);
-    m_program->setUniformValue("uLightBase.specular", 5.0f, 5.0f, 5.0f);
+    m_program->setUniformValue("uLightBase.specular", 1.0f, 1.0f, 1.0f);
 
     m_program->setUniformValue("uLightColor", 1.0f, 1.0f, 1.0f);
-
-    m_program->setUniformValue("uViewPos", view);
+    m_program->setUniformValue("uViewPos", m_actor->camera()->position());
 
     drawRoom(2,4,projection, view);
 
