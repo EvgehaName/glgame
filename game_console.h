@@ -11,6 +11,8 @@
 #include <QScrollBar>
 #include <QVBoxLayout>
 
+#include "console_commands.h"
+
 class IConsoleCommand;
 
 class GameConsole : public QWidget
