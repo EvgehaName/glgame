@@ -1,7 +1,7 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#include "camera/fpscamera.h"
+#include "fpscamera.h"
 
 class Actor
 {

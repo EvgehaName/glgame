@@ -12,6 +12,7 @@
 #include <QCursor>
 #include <QTimer>
 
+#include "hud.h"
 #include "actor.h"
 #include "game_console.h"
 
@@ -42,6 +43,7 @@ private:
     GLuint m_vao = 0;
     float m_angle = 0.0f;
 
+    Hud * m_hud;
     Actor * m_actor;
     GameConsole * m_consoleWidget;
     MovementState m_movementState;
@@ -65,5 +67,6 @@ protected:
     void closeEvent(QCloseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+    void focusOutEvent(QFocusEvent* event) override;
 };
 #endif // WIDGET_H

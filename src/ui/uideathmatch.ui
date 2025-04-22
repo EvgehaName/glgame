@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UIDeathmatch</class>
+ <widget class="QWidget" name="UIDeathmatch">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>311</width>
+    <height>66</height>
+   </rect>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: transparent;</string>
+  </property>
+  <widget class="QLabel" name="matchTimer">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>25</y>
+     <width>70</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+                    color: #ffcc00;
+                    font-family: 'Impact';
+                    font-size: 24px;
+                    qproperty-alignment: AlignCenter;
+                    background-color: rgba(20, 20, 20, 200);
+                    border: 1px solid #555;
+                    border-radius: 5px;
+                </string>
+   </property>
+   <property name="text">
+    <string>05:00</string>
+   </property>
+  </widget>
+  <widget class="QProgressBar" name="teamAllyProgress">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>150</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+                    QProgressBar {
+                        border: 1px solid #333;
+                        border-radius: 3px;
+                        background: #222;
+                    }
+                    QProgressBar::chunk {
+                        background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                            stop:0 #f0f0f0, stop:1 #a0a0a0);
+                        border-radius: 2px;
+                    }
+                </string>
+   </property>
+   <property name="value">
+    <number>65</number>
+   </property>
+   <property name="textVisible">
+    <bool>false</bool>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Orientation::Horizontal</enum>
+   </property>
+   <property name="invertedAppearance">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QProgressBar" name="teamEnemyProgress">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>0</y>
+     <width>150</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+                    QProgressBar {
+                        border: 1px solid #333;
+                        border-radius: 3px;
+                        background: #222;
+                    }
+                    QProgressBar::chunk {
+                        background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                            stop:0 #ff4040, stop:1 #a00000);
+                        border-radius: 2px;
+                    }
+                </string>
+   </property>
+   <property name="value">
+    <number>35</number>
+   </property>
+   <property name="textVisible">
+    <bool>false</bool>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Orientation::Horizontal</enum>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,4 +1,4 @@
-#include "camera/fpscamera.h"
+#include "fpscamera.h"
 
 FPSCamera::FPSCamera() {}
 

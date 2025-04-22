@@ -16,6 +16,9 @@ Widget::Widget(QWidget *parent)
     m_consoleWidget = new GameConsole(this);
     m_consoleWidget->hide();
 
+    m_hud = new Hud(this);
+
+
     m_frameTimer = new QTimer(this);
     connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTick()));
     m_frameTimer->start(1000 / 60.0f);
@@ -104,6 +107,8 @@ void Widget::initializeGL()
 void Widget::resizeGL(int width, int height)
 {
     glViewport(0,0, width, height);
+
+    m_hud->onResize(width, height);
     m_consoleWidget->setGeometry(0, 0, width, height >> 1);
 }
 
@@ -330,5 +335,15 @@ void Widget::keyReleaseEvent(QKeyEvent *event)
 
     if (event->key() == Qt::Key_D) {
         m_movementState.m_left = false;
+    }
+}
+
+void Widget::focusOutEvent(QFocusEvent *event)
+{
+    QWidget::focusOutEvent(event);
+
+    /* Если окно потеряло фокус, и это не консоль или пользователь, возвращаем */
+    if (!m_consoleWidget->consoleHasFocus() && event->reason() != Qt::ActiveWindowFocusReason) {
+        setFocus();
     }
 }
