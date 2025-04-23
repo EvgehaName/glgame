@@ -1,11 +1,7 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions_4_3_Core>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLShader>
-#include <QOpenGLTexture>
+#include "gameobject.h"
 
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -38,19 +34,15 @@ protected:
 private:
     Ui::Widget *ui;
     QTimer * m_frameTimer;
-    QOpenGLShaderProgram *m_program;
-    GLuint m_vbo = 0;
-    GLuint m_vao = 0;
     float m_angle = 0.0f;
 
     Hud * m_hud;
     Actor * m_actor;
     GameConsole * m_consoleWidget;
     MovementState m_movementState;
+    GameObject *object;
 
-    QMap<std::string, QOpenGLTexture*> textureMap;
-    QOpenGLTexture *texture;
-    QOpenGLTexture *texture1;
+    
 
     std::vector<QVector3D> elemPosWalls {QVector3D(0.0f,0.0f,0.0f)};
     QVector3D tempPos3DWalls;

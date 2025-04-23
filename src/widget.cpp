@@ -50,63 +50,8 @@ void Widget::initializeGL()
     printf("    Type: %s\n", systemInfo.productType().toStdString().c_str());
     printf("    Name: %s\n", systemInfo.prettyProductName().toStdString().c_str());
     printf("    Version: %s\n", systemInfo.productVersion().toStdString().c_str());
-
-    m_program = new QOpenGLShaderProgram();
-    m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vertexShader.glsl");
-    m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fragmentShader.glsl");
-    Q_ASSERT(m_program->link());
-
-
-    float vertices[] = {
-        //x    //y   //z    //normal          // uv
-        -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  // нижняя правая точка
-        0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   // верняя правая точка
-        0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // верхняя левая точка
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f // нижняя левая точка
-    };
-
-
-    GLuint indices[] = {
-        0, 3, 1, 3, 2, 1  // квадрат
-    };
-
-    textureMap["wall"] = new QOpenGLTexture(QImage(":/textures/wall_basecolor.png").mirrored());
-    textureMap["wall"]->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    textureMap["wall"]->setMagnificationFilter(QOpenGLTexture::Linear);
-    textureMap["wall"]->setWrapMode(QOpenGLTexture::Repeat);
-
-    textureMap["floor"] = new QOpenGLTexture(QImage(":/textures/floor_basecolor.png").mirrored());
-    textureMap["floor"]->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    textureMap["floor"]->setMagnificationFilter(QOpenGLTexture::Linear);
-    textureMap["floor"]->setWrapMode(QOpenGLTexture::Repeat);
-
-    glGenVertexArrays(1, &m_vao);
-    glGenBuffers(1, &m_vbo);
-    GLuint ebo;
-    glGenBuffers(1, &ebo);
-
-    glBindVertexArray(m_vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    // position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // normal
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // uv
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+   
+    Q_ASSERT(object->m_programShader->link());    
     setup();
 }
 
@@ -125,7 +70,7 @@ void Widget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    m_program->bind();
+    object->m_programShader->bind();
 
     QMatrix4x4 projection;
     projection.perspective(45.0f, width() / float(height()), 0.1f, 100.0f);
@@ -134,18 +79,18 @@ void Widget::paintGL()
     view.translate(0.0f,-0.3f,-2.0f);
     
     direction.normalize();
-    m_program->setUniformValue("uLightBase.direction", direction.x(), direction.y(), direction.z());
+    object->m_programShader->setUniformValue("uLightBase.direction", direction.x(), direction.y(), direction.z());
 
-    m_program->setUniformValue("uLightBase.ambient", 0.5f, 0.5f, 0.5f);
-    m_program->setUniformValue("uLightBase.diffuse", 1.3f, 1.3f, 0.3f);
-    m_program->setUniformValue("uLightBase.specular", 1.0f, 1.0f, 1.0f);
+    object->m_programShader->setUniformValue("uLightBase.ambient", 0.5f, 0.5f, 0.5f);
+    object->m_programShader->setUniformValue("uLightBase.diffuse", 1.3f, 1.3f, 0.3f);
+    object->m_programShader->setUniformValue("uLightBase.specular", 1.0f, 1.0f, 1.0f);
 
-    m_program->setUniformValue("uLightColor", 1.0f, 1.0f, 1.0f);
-    m_program->setUniformValue("uViewPos", m_actor->camera()->position());
+    object->m_programShader->setUniformValue("uLightColor", 1.0f, 1.0f, 1.0f);
+    object->m_programShader->setUniformValue("uViewPos", m_actor->camera()->position());
 
     drawRoom(2,4,projection, view);
 
-    m_program->release();
+    object->m_programShader->release();
 }
 
 
