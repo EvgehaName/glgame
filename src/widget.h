@@ -1,7 +1,10 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include "gameobject.h"
+#include "game/cube.h"
+
+#include <qopenglwidget.h>
+#include <qopenglfunctions_4_3_core.h>
 
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -36,11 +39,16 @@ private:
     QTimer * m_frameTimer;
     float m_angle = 0.0f;
 
+    GLuint m_vbo = 0;
+    GLuint m_vao = 0;
+    QOpenGLShaderProgram* m_programShader;
+    QMap<std::string, QOpenGLTexture*> textureMap;
+    
     Hud * m_hud;
     Actor * m_actor;
     GameConsole * m_consoleWidget;
     MovementState m_movementState;
-    GameObject *object;
+    RenderGeometry* cube{ nullptr };
 
     
 

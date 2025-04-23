@@ -50,8 +50,7 @@ void Widget::initializeGL()
     printf("    Type: %s\n", systemInfo.productType().toStdString().c_str());
     printf("    Name: %s\n", systemInfo.prettyProductName().toStdString().c_str());
     printf("    Version: %s\n", systemInfo.productVersion().toStdString().c_str());
-   
-    Q_ASSERT(object->m_programShader->link());    
+    
     setup();
 }
 
@@ -70,27 +69,27 @@ void Widget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    object->m_programShader->bind();
+    m_programShader->bind();
 
     QMatrix4x4 projection;
     projection.perspective(45.0f, width() / float(height()), 0.1f, 100.0f);
 
     QMatrix4x4 view = m_actor->camera()->viewMatrix();
     view.translate(0.0f,-0.3f,-2.0f);
+
+    m_programShader->setUniformValue("uProjection", projection);
+    m_programShader->setUniformValue("uView", view);
     
     direction.normalize();
-    object->m_programShader->setUniformValue("uLightBase.direction", direction.x(), direction.y(), direction.z());
 
-    object->m_programShader->setUniformValue("uLightBase.ambient", 0.5f, 0.5f, 0.5f);
-    object->m_programShader->setUniformValue("uLightBase.diffuse", 1.3f, 1.3f, 0.3f);
-    object->m_programShader->setUniformValue("uLightBase.specular", 1.0f, 1.0f, 1.0f);
-
-    object->m_programShader->setUniformValue("uLightColor", 1.0f, 1.0f, 1.0f);
-    object->m_programShader->setUniformValue("uViewPos", m_actor->camera()->position());
+    m_programShader->setUniformValue("uLightBase.direction", direction.x(), direction.y(), direction.z());
+    m_programShader->setUniformValue("uLightBase.ambient", 0.5f, 0.5f, 0.5f);
+    m_programShader->setUniformValue("uLightBase.diffuse", 1.3f, 1.3f, 0.3f);
+    m_programShader->setUniformValue("uLightBase.specular", 1.0f, 1.0f, 1.0f);
+    m_programShader->setUniformValue("uLightColor", 1.0f, 1.0f, 1.0f);
+    m_programShader->setUniformValue("uViewPos", m_actor->camera()->position());
 
     drawRoom(2,4,projection, view);
-
-    object->m_programShader->release();
 }
 
 
@@ -99,7 +98,7 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
     int countElement = (countHeight * 2) + (countWidht * 2);
 
     textureMap["wall"]->bind(0);
-    m_program->setUniformValue("uTextureSampler", 0);
+    m_programShader->setUniformValue("uTextureSampler", 0);
 
     // draw walls
     for (size_t i = 0; i <= countElement; i++)
@@ -155,16 +154,16 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
             model.translate(elemPosWalls.at(i).x(), elemPosWalls.at(i).y(), elemPosWalls.at(i).z());
             model.rotate(90.0f, 0.0f, 1.0f,0.0f);
         }
-        m_program->setUniformValue("uProjection", projection);
-        m_program->setUniformValue("uView", view);
-        m_program->setUniformValue("uModel", model);
+        m_programShader->setUniformValue("uProjection", projection);
+        m_programShader->setUniformValue("uView", view);
+        m_programShader->setUniformValue("uModel", model);
                     
         glBindVertexArray(m_vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
     textureMap["floor"]->bind(0);
-    m_program->setUniformValue("uTextureSampler", 0);
+    m_programShader->setUniformValue("uTextureSampler", 0);
 
     // draw floor
     for (size_t i = 0; i < countHeight; i++)
@@ -174,13 +173,16 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
             QMatrix4x4 model;
             model.translate(i * 1.0f, -0.5f, 0.5f + t * 1.0f);
             model.rotate(90.0f, 1.0f, 0.0f,0.0f);
-            m_program->setUniformValue("uProjection", projection);
-            m_program->setUniformValue("uView", view);
-            m_program->setUniformValue("uModel", model);
+            m_programShader->setUniformValue("uProjection", projection);
+            m_programShader->setUniformValue("uView", view);
+            m_programShader->setUniformValue("uModel", model);
             glBindVertexArray(m_vao);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }        
     }
+
+    if (cube)
+        cube->render();
 }
 
 void Widget::setup()
@@ -203,7 +205,70 @@ void Widget::setup()
         }
     });
 
+    /* ЗАГРУЗКА РЕСУРСОВ ИГРЫ */
+    m_programShader = new QOpenGLShaderProgram();
+    m_programShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vertexShader.glsl");
+    m_programShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fragmentShader.glsl");
+    Q_ASSERT(m_programShader->link());
+
+    textureMap["wall"] = new QOpenGLTexture(QImage(":/textures/wall_basecolor.png").mirrored());
+    textureMap["wall"]->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    textureMap["wall"]->setMagnificationFilter(QOpenGLTexture::Linear);
+    textureMap["wall"]->setWrapMode(QOpenGLTexture::Repeat);
+
+    textureMap["floor"] = new QOpenGLTexture(QImage(":/textures/floor_basecolor.png").mirrored());
+    textureMap["floor"]->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    textureMap["floor"]->setMagnificationFilter(QOpenGLTexture::Linear);
+    textureMap["floor"]->setWrapMode(QOpenGLTexture::Repeat);
+
+    // КОМНАТА
+    {
+        float vertices[] = {
+            //x    //y   //z    //normal          // uv
+            -0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  // нижняя правая точка
+            0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   // верняя правая точка
+            0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // верхняя левая точка
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f // нижняя левая точка
+        };
+
+
+        GLuint indices[] = {
+            0, 3, 1, 3, 2, 1  // квадрат
+        };
+
+        glGenVertexArrays(1, &m_vao);
+        glGenBuffers(1, &m_vbo);
+        GLuint ebo;
+        glGenBuffers(1, &ebo);
+
+        glBindVertexArray(m_vao);
+
+        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+        // position
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+        // normal
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+
+        // uv
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
+
     m_actor = new Actor();
+
+    cube = new Cube();
+    cube->setShader(m_programShader);
 }
 
 void Widget::mouseMove()
@@ -242,7 +307,7 @@ void Widget::frameTick()
 void Widget::closeEvent(QCloseEvent *event)
 {
     makeCurrent();
-    delete m_program;
+    delete m_programShader;
 
     delete m_actor;
 
