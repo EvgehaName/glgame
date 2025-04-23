@@ -1,3 +1,13 @@
+# How to build and setup 
+
+## Build:
+
+You can use any IDE you like because our project is configured to use CMake.
+However, we tested building the project in Qt Creator, Visual Studio 2022 with a plugin installed to support Qt and Visual Code on Linux. We have not tested other IDEs.
+
+## Libraries:
+All required libraries are already in repository as plain files or as submodules.
+
 ## Setup:
 
 - Clone the repository (you should not download it as an archive)
