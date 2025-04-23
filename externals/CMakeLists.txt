@@ -1,5 +1,0 @@
-add_compile_options("-w")
-if (WIN32)
-	add_compile_definitions(-DWIN32=1)
-endif()
-add_subdirectory(ode)

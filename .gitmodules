@@ -1,4 +1,0 @@
-[submodule "externals/ode"]
-	path = externals/ode
-	url = https://bitbucket.org/odedevs/ode.git
-	branch = master
