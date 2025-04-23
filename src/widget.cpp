@@ -16,6 +16,9 @@ Widget::Widget(QWidget *parent)
     m_consoleWidget = new GameConsole(this);
     m_consoleWidget->hide();
 
+    m_hud = new Hud(this);
+
+
     m_frameTimer = new QTimer(this);
     connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTick()));
     m_frameTimer->start(1000 / 60.0f);
@@ -110,6 +113,8 @@ void Widget::initializeGL()
 void Widget::resizeGL(int width, int height)
 {
     glViewport(0,0, width, height);
+
+    m_hud->onResize(width, height);
     m_consoleWidget->setGeometry(0, 0, width, height >> 1);
 }
 
@@ -241,7 +246,17 @@ void Widget::setup()
     /* Скрывает курсор (если поддерживается) */
     setCursor(Qt::BlankCursor);
 
-    m_consoleWidget->registerCommand<GameQuitCommand>("game_quit");
+    m_consoleWidget->registerCommand("quit", [](const CCommand& cmd) {
+        QApplication::quit();
+    });
+
+    m_consoleWidget->registerCommand("r_fullscreen", [&](const CCommand& cmd) {
+        if (cmd.argv(1) == "1") {
+            setWindowState(Qt::WindowFullScreen);
+        } else if (cmd.argv(1) == "0") {
+            setWindowState(Qt::WindowNoState);
+        }
+    });
 
     m_actor = new Actor();
 }
@@ -268,6 +283,10 @@ void Widget::mouseMove()
 /* Вызывается каждый кадр */
 void Widget::frameTick()
 {
+    if (!hasFocus() && !m_consoleWidget->consoleHasFocus()) {
+        return;
+    }
+
     mouseMove();
     m_actor->onAction(m_movementState, 16.0f);
 
@@ -291,7 +310,8 @@ void Widget::closeEvent(QCloseEvent *event)
 
 void Widget::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Escape) {
+    /* Скрытие или показ окна консоли */
+    if (event->key() == Qt::Key_QuoteLeft) {
         if (m_consoleWidget->isHidden()) {
             m_consoleWidget->show();
         } else {
@@ -333,5 +353,15 @@ void Widget::keyReleaseEvent(QKeyEvent *event)
 
     if (event->key() == Qt::Key_D) {
         m_movementState.m_left = false;
+    }
+}
+
+void Widget::focusOutEvent(QFocusEvent *event)
+{
+    QWidget::focusOutEvent(event);
+
+    /* Если окно потеряло фокус, и это не консоль или пользователь, возвращаем */
+    if (!m_consoleWidget->consoleHasFocus() && event->reason() != Qt::ActiveWindowFocusReason) {
+        setFocus();
     }
 }

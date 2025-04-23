@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UIHealthBar</class>
+ <widget class="QWidget" name="UIHealthBar">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>300</width>
+    <height>25</height>
+   </rect>
+  </property>
+  <widget class="QFrame" name="healthBarBackground">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>300</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+                    background-color: #252525;
+                    border: 2px solid #555;
+                    border-radius: 5px;</string>
+   </property>
+  </widget>
+  <widget class="QProgressBar" name="damageBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>5</x>
+     <y>5</y>
+     <width>290</width>
+     <height>15</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+                    QProgressBar {
+                        border: 1px solid #2a3a4a;
+                        border-radius: 3px;
+                        text-align: center;
+                    }
+
+                    QProgressBar::chunk {
+                        background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                            stop:0 #ff3a3a, stop:0.5 #bf1a1a, stop:1 #7a0000);
+                        border-radius: 2px;
+                    }
+
+
+                </string>
+   </property>
+   <property name="value">
+    <number>85</number>
+   </property>
+   <property name="textVisible">
+    <bool>false</bool>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

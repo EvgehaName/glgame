@@ -36,6 +36,7 @@ GameConsole::GameConsole(QWidget *parent) : QWidget(parent)
         "}"
         );
     pInputLineEdit->setCursor(Qt::BlankCursor);
+    pInputLineEdit->installEventFilter(this);
 
     layout->addWidget(pOutputTextEdit);
     layout->addWidget(pInputLineEdit);
@@ -43,20 +44,33 @@ GameConsole::GameConsole(QWidget *parent) : QWidget(parent)
     connect(pInputLineEdit, &QLineEdit::returnPressed, this, &GameConsole::executeCommandInternal);
 }
 
-void GameConsole::registerCommand(const QString &name, IConsoleCommand *cmd)
+bool GameConsole::consoleHasFocus() const
 {
-    m_commands[name] = std::unique_ptr<IConsoleCommand>(cmd);
+    return pInputLineEdit->hasFocus();
 }
 
-void GameConsole::executeCommand(const QString &name)
+void GameConsole::registerCommand(const QString &name, CommandCallback command)
 {
-    auto it = m_commands.find(name);
+    m_commands[name] = command;
+}
+
+void GameConsole::executeCommand(const QString &argv)
+{
+    CCommand command(argv);
+
+    auto it = m_commands.find(command.argv(0));
     if (it != m_commands.end()) {
-        it->second->Execute();
+        if (it->second) {
+            it->second(argv);
+        } else {
+            warning(QString("Unknown command: %1").arg(argv));
+        }
     } else {
-        warning(QString("Unknown command: %1").arg(name));
+        warning(QString("Unknown command: %1").arg(argv));
     }
 
+    /* Добавим команду в вывод консоли и очистим поле ввода */
+    info(argv);
     pInputLineEdit->clear();
 }
 
@@ -98,7 +112,27 @@ void GameConsole::log(const QString &message, LogLevel level)
 void GameConsole::showEvent(QShowEvent *event)
 {
     QWidget::showEvent(event);
+
+    /* Очистим поле ввода команд и установим на него фокус */
+    pInputLineEdit->clear();
     pInputLineEdit->setFocus();
+}
+
+bool GameConsole::eventFilter(QObject *target, QEvent *event)
+{
+    /* Скрытие окна консоли */
+    if (target == pInputLineEdit) {
+        if (event->type() == QEvent::KeyPress) {
+            QKeyEvent * keyEvent = (QKeyEvent*)event;
+            if (keyEvent->key() == Qt::Key_QuoteLeft) {
+                /* Возвращаем фокус родителю и скрываем консоль */
+                focusNextPrevChild(true);
+                hide();
+            }
+        }
+    }
+
+    return QWidget::eventFilter(target, event);
 }
 
 void GameConsole::executeCommandInternal()

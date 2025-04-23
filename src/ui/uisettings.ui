@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UISettings</class>
+ <widget class="QWidget" name="UISettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>816</width>
+    <height>618</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+    background-color: #1a1c1a;
+    color: #d4d4b8; 
+    font-family: &quot;Bahnschrift&quot;, &quot;Consolas&quot;, &quot;Arial&quot;;
+    font-size: 13px;
+}
+
+QTabWidget::pane {
+    border: 1px solid #3a3a2f;
+    background-color: #2c2e2c;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+QTabBar::tab {
+    padding: 8px 12px;
+    background: #353834;
+    border: 1px solid #2e2e26;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    margin-right: 2px;
+    color: #aaa882;
+}
+
+QTabBar::tab:selected {
+    background: #4a4d48;
+    border-bottom: 1px solid #2c2e2c;
+    color: #e0dfc4;
+}
+
+QPushButton {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #5d5f53, stop:1 #363832);
+    border: 1px solid #6a5f3e;
+    border-radius: 3px;
+    padding: 5px 10px;
+    color: #e4e1c8;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #000000;
+}
+
+QPushButton:hover {
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                      stop:0 #706c58, stop:1 #45463b);
+    border: 1px solid #8c7f4a;
+}
+
+QPushButton:pressed {
+    background-color: #2d2e29;
+    border: 1px solid #a29466;
+}
+
+QGroupBox {
+    border: 1px solid #4e4e3a;
+    border-radius: 3px;
+    margin-top: 20px;
+    background-color: #262822;
+    padding: 8px;
+}
+
+QGroupBox:title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 5px;
+    background-color: #1a1c1a;
+    color: #b5b291;
+    font-weight: bold;
+}
+
+QSlider::groove:horizontal {
+    border: 1px solid #555;
+    height: 6px;
+    background: #2d2e26;
+    border-radius: 3px;
+}
+
+QSlider::handle:horizontal {
+    background: #847e5c;
+    border: 1px solid #b1a367;
+    width: 12px;
+    margin: -4px 0;
+    border-radius: 6px;
+}
+
+QSlider::handle:horizontal:hover {
+    background: #9f9962;
+}
+
+QCheckBox, QRadioButton {
+    spacing: 6px;
+    color: #cfcaa0;
+}
+
+QLabel {
+    color: #d4d4b8;
+}</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item>
+    <widget class="QGroupBox" name="settingsGroupBox">
+     <property name="title">
+      <string>Настройки</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="currentIndex">
+         <number>3</number>
+        </property>
+        <widget class="QWidget" name="gameTab">
+         <attribute name="title">
+          <string>Игра</string>
+         </attribute>
+         <widget class="QCheckBox" name="checkShowTeamInfo">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>30</y>
+            <width>341</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Всегда отоброжать имена и здоровье союзников</string>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="controlTab">
+         <attribute name="title">
+          <string>Управление</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="mainControlsLayout">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalControlsSplitLayout">
+            <item>
+             <layout class="QFormLayout" name="leftControlSettingsLayout">
+              <property name="verticalSpacing">
+               <number>12</number>
+              </property>
+              <item row="1" column="0">
+               <widget class="QLabel" name="labelMouseSensitivity">
+                <property name="text">
+                 <string>Чувствительность мыши</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QSlider" name="sliderMouseSensitivity">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>20</number>
+                </property>
+                <property name="value">
+                 <number>6</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2">
+               <widget class="QPushButton" name="buttonResetControls">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Базовые настройки</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" colspan="2">
+               <widget class="QCheckBox" name="checkInvertMouse">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Инвертировать мышь</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QTreeWidget" name="treeKeyBindings">
+              <property name="showDropIndicator" stdset="0">
+               <bool>false</bool>
+              </property>
+              <property name="selectionMode">
+               <enum>QAbstractItemView::NoSelection</enum>
+              </property>
+              <property name="textElideMode">
+               <enum>Qt::ElideNone</enum>
+              </property>
+              <property name="rootIsDecorated">
+               <bool>true</bool>
+              </property>
+              <property name="uniformRowHeights">
+               <bool>false</bool>
+              </property>
+              <property name="itemsExpandable">
+               <bool>true</bool>
+              </property>
+              <property name="animated">
+               <bool>false</bool>
+              </property>
+              <property name="allColumnsShowFocus">
+               <bool>false</bool>
+              </property>
+              <property name="wordWrap">
+               <bool>false</bool>
+              </property>
+              <property name="headerHidden">
+               <bool>false</bool>
+              </property>
+              <property name="expandsOnDoubleClick">
+               <bool>false</bool>
+              </property>
+              <attribute name="headerVisible">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="headerCascadingSectionResizes">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="headerHighlightSections">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="headerShowSortIndicator" stdset="0">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="headerStretchLastSection">
+               <bool>true</bool>
+              </attribute>
+              <column>
+               <property name="text">
+                <string>Действие</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Клавиша</string>
+               </property>
+              </column>
+              <item>
+               <property name="text">
+                <string>Вперед</string>
+               </property>
+               <property name="text">
+                <string>W</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Назад</string>
+               </property>
+               <property name="text">
+                <string>S</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Шаг влево</string>
+               </property>
+               <property name="text">
+                <string>A</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Шаг вправо</string>
+               </property>
+               <property name="text">
+                <string>D</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="renderTab">
+         <attribute name="title">
+          <string>Графика</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="mainVerticalLayout">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalSplitLayout">
+            <item>
+             <layout class="QFormLayout" name="formLayoutLeft">
+              <property name="verticalSpacing">
+               <number>12</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelMonitor">
+                <property name="text">
+                 <string>Активный монитор</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="comboMonitor">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="labelResolution">
+                <property name="text">
+                 <string>Разрешение</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QComboBox" name="comboResolution">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>800x600</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1024x768</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1280x720</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1600x900</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1920x1080</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2">
+               <widget class="QCheckBox" name="checkFullscreen">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Полноэкранный режим</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0" colspan="2">
+               <widget class="QCheckBox" name="checkVSync">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Вертикальная синхронизация</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="labelAntiAliasing">
+                <property name="text">
+                 <string>Антиалиасинг</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QComboBox" name="comboAntialiasing">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="labelAnisotropy">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Анизотропная фильтрация</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QComboBox" name="comboAnisotropy">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="labelGamma">
+                <property name="text">
+                 <string>Гамма</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QSlider" name="sliderGamma">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QFormLayout" name="formLayoutRight">
+              <property name="verticalSpacing">
+               <number>12</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelQuality">
+                <property name="text">
+                 <string>Качество графики</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="comboQuality">
+                <item>
+                 <property name="text">
+                  <string>Минимум</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Низко</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Средне</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Высоко</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="labelTextures">
+                <property name="text">
+                 <string>Качество текстур</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QComboBox" name="comboTextures">
+                <item>
+                 <property name="text">
+                  <string>Минимум</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Низко</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Средне</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Высоко</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="labelLighting">
+                <property name="text">
+                 <string>Качество освещения</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QComboBox" name="comboLighting">
+                <item>
+                 <property name="text">
+                  <string>Минимум</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Низко</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Средне</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Высоко</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="labelShadows">
+                <property name="text">
+                 <string>Качество теней</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QComboBox" name="comboShadows">
+                <item>
+                 <property name="text">
+                  <string>Минимум</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Низко</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Средне</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Высоко</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="labelPostFX">
+                <property name="text">
+                 <string>Постобработка</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QComboBox" name="comboPostFX">
+                <item>
+                 <property name="text">
+                  <string>Минимум</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Низко</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Средне</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Высоко</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="soundTab">
+         <attribute name="title">
+          <string>Звук</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="mainAudioLayout">
+          <item>
+           <widget class="QFrame" name="volumeGroup">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QFormLayout" name="volumeLayout">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelMasterVolume">
+               <property name="text">
+                <string>Общая громкость</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QSlider" name="sliderMasterVolume">
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>80</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelGameVolume">
+               <property name="text">
+                <string>Громкость игры</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSlider" name="sliderGameVolume">
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>70</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelMusicVolume">
+               <property name="text">
+                <string>Громкость музыки</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QSlider" name="sliderMusicVolume">
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>50</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelVoiceChatVolume">
+               <property name="text">
+                <string>Громкость голосового чата</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QSlider" name="sliderVoiceChatVolume">
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>60</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelMicSensitivity">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Чувствительность микрофона</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QSlider" name="sliderMicSensitivity">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>20</number>
+               </property>
+               <property name="value">
+                <number>10</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="applyBtn">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Применить</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="closeBtn">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Закрыть</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

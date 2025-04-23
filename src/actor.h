@@ -1,7 +1,7 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#include "camera/fpscamera.h"
+#include "fpscamera.h"
 
 class Actor
 {
@@ -24,7 +24,7 @@ private:
     float m_lookFactor = 1.0f;
     float m_mouseSensScale = 1.0f;
     QVector3D m_position;
-    CameraBase * m_camera;
+    FPSCamera m_camera;
 };
 
 #endif // ACTOR_H
