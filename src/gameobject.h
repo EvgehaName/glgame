@@ -9,7 +9,7 @@ class GameObject : public Geom, protected QOpenGLFunctions_4_3_Core
         GameObject();
         ~GameObject();
 
-        void draw();
+        void render();
     
     private:
         void initTexture();

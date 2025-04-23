@@ -5,12 +5,17 @@ GameObject::GameObject()
     m_programShader = new QOpenGLShaderProgram();
     m_programShader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vertexShader.glsl");
     m_programShader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fragmentShader.glsl");
+    initTexture();
     initBuffersPlaceObject();
 }
 
-void GameObject::draw()
+void GameObject::render()
 {
-    
+    m_programShader->setUniformValue("uProjection", projection);
+    m_programShader->setUniformValue("uView", view);
+    m_programShader->setUniformValue("uModel", model);
+    glBindVertexArray(m_vao);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void GameObject::initTexture()
