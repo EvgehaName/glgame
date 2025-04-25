@@ -53,3 +53,5 @@ target_link_libraries(${PROJECT_NAME}
     Qt::Core
     ${OPENGL_LIBRARIES}
 )
+
+add_subdirectory(externals)

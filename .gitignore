@@ -1,15 +1,14 @@
-/.vscode
-/build
+# All dot files except .git
+.*
+!.git*
 
-CMakeLists.txt.user
-CMakeCache.txt
-CMakeFiles
-CMakeScripts
-Testing
-Makefile
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
-_deps
+# Binaries and temporary files
+[Oo]t*/
+[Bb]in*/
+[Bb]uild*/
+
+# User-specific files
+*.user
+*.user.props
+*.nvuser
 CMakeUserPresets.json
