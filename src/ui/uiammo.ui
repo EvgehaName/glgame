@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UIAmmo</class>
+ <widget class="QWidget" name="UIAmmo">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>200</width>
+    <height>60</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>200</width>
+    <height>60</height>
+   </size>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QLabel" name="labelMagAmmo">
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>24</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+QLabel {
+    color: white;
+    font-size: 24pt;
+    font-family: &quot;Consolas&quot;, &quot;Courier New&quot;, monospace;
+    background: transparent;
+}
+      </string>
+     </property>
+     <property name="text">
+      <string>2</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelSlash">
+     <property name="styleSheet">
+      <string notr="true">
+QLabel {
+    color: white;
+    font-size: 18pt;
+    font-family: &quot;Consolas&quot;, &quot;Courier New&quot;, monospace;
+    background: transparent;
+}
+      </string>
+     </property>
+     <property name="text">
+      <string>/</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelTotalAmmo">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="mouseTracking">
+      <bool>true</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+QLabel {
+    color: white;
+    font-size: 18pt;
+    font-family: &quot;Consolas&quot;, &quot;Courier New&quot;, monospace;
+    background: transparent;
+}
+      </string>
+     </property>
+     <property name="text">
+      <string>&lt;span style=&quot;color:gray;&quot;&gt;0&lt;/span&gt;50</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::TextFormat::RichText</enum>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

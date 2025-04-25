@@ -8,9 +8,7 @@ Actor::Actor()
 {
     QString setpath = QApplication::applicationDirPath() + "/config.ini";
     QSettings settings(setpath, QSettings::NativeFormat);
-
-    m_camera = new FPSCamera();
-    m_camera->loadSection("actor_cam", settings);
+    m_camera.loadSection("actor_cam", settings);
 }
 
 void Actor::onAction(const MovementState& state, float deltaTime)
@@ -39,7 +37,7 @@ void Actor::onAction(const MovementState& state, float deltaTime)
 
     QMatrix4x4 R;
     R.setToIdentity();
-    R.rotate(qRadiansToDegrees(m_camera->yaw()), {0.0f, 1.0f, 0.0f});
+    R.rotate(qRadiansToDegrees(m_camera.yaw()), {0.0f, 1.0f, 0.0f});
 
 #if QT_VERSION >= 0x060000
     vAccel = R.map(vAccel);
@@ -54,30 +52,30 @@ void Actor::onRotate(int dx, int dy)
     float fx = static_cast<float>(dx);
     float fy = static_cast<float>(dy);
 
-    const float scale = (camera()->fov() / m_baseFov) * m_mouseSens * m_mouseSensScale / 50.f / m_lookFactor;
+    const float scale = (m_camera.fov() / m_baseFov) * m_mouseSens * m_mouseSensScale / 50.f / m_lookFactor;
     constexpr float eps = 0.0000001f;
 
     if (std::abs(fx) > eps) {
         const float dFactor = hDirectionFactor(fx, scale, true);
         EInputScreenDirection dType = toScreenDirection(EInputAxis::Horizontal, dFactor);
-        camera()->moveCamera(dType, std::abs(dFactor), 16.f);
+        m_camera.moveCamera(dType, std::abs(dFactor), 16.f);
     }
 
     if (std::abs(fy) > eps) {
         float dFactor = vDirectionFactor(fy, scale, false);
         EInputScreenDirection dType = toScreenDirection(EInputAxis::Vertical, dFactor);
-        camera()->moveCamera(dType, std::abs(dFactor), 16.f);
+        m_camera.moveCamera(dType, std::abs(dFactor), 16.f);
     }
 }
 
 void Actor::update()
 {
-    camera()->update(m_position);
+    m_camera.update(m_position);
 }
 
 CameraBase *Actor::camera()
 {
-    return m_camera;
+    return &m_camera;
 }
 
 float Actor::hDirectionFactor(float x, float scaleX, bool invertX) const
