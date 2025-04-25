@@ -124,7 +124,7 @@ bool GameConsole::eventFilter(QObject *target, QEvent *event)
     if (target == pInputLineEdit) {
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent * keyEvent = (QKeyEvent*)event;
-            if (keyEvent->key() == Qt::Key_QuoteLeft) {
+            if (keyEvent->nativeVirtualKey() == Qt::Key_Agrave) {
                 /* Возвращаем фокус родителю и скрываем консоль */
                 focusNextPrevChild(true);
                 hide();

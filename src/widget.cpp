@@ -163,8 +163,11 @@ void Widget::closeEvent(QCloseEvent *event)
 
 void Widget::keyPressEvent(QKeyEvent *event)
 {
+    int key = event->nativeVirtualKey();
+    qDebug() << key;
+
     /* Скрытие или показ окна консоли */
-    if (event->key() == Qt::Key_QuoteLeft) {
+    if (key == Qt::Key_Agrave) {
         if (m_consoleWidget->isHidden()) {
             m_consoleWidget->show();
         } else {
@@ -173,38 +176,40 @@ void Widget::keyPressEvent(QKeyEvent *event)
     }
 
 
-    if (event->key() == Qt::Key_W) {
+    if (key == Qt::Key_W) {
        m_movementState.m_forward = true;
     }
 
-    if (event->key() == Qt::Key_A) {
+    if (key == Qt::Key_A) {
         m_movementState.m_right = true;
     }
 
-    if (event->key() == Qt::Key_S) {
+    if (key == Qt::Key_S) {
         m_movementState.m_back = true;
     }
 
-    if (event->key() == Qt::Key_D) {
+    if (key == Qt::Key_D) {
         m_movementState.m_left = true;
     }
 }
 
 void Widget::keyReleaseEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_W) {
+    int key = event->nativeVirtualKey();
+
+    if (key == Qt::Key_W) {
        m_movementState.m_forward = false;
     }
 
-    if (event->key() == Qt::Key_A) {
+    if (key == Qt::Key_A) {
         m_movementState.m_right = false;
     }
 
-    if (event->key() == Qt::Key_S) {
+    if (key == Qt::Key_S) {
         m_movementState.m_back = false;
     }
 
-    if (event->key() == Qt::Key_D) {
+    if (key == Qt::Key_D) {
         m_movementState.m_left = false;
     }
 }
