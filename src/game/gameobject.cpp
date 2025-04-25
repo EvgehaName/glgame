@@ -99,14 +99,11 @@ const QMatrix4x4& GameObject::getModelMatrix() const
 {
     if (m_dirty)
     {
-        QQuaternion QX = QQuaternion::fromAxisAndAngle(1.0f, 0.0f, 0.0f, m_rotation.x());
-        QQuaternion QY = QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, m_rotation.y());
-        QQuaternion QZ = QQuaternion::fromAxisAndAngle(0.0f, 0.0f, 1.0f, m_rotation.z());
-        QQuaternion rotation  = QX * QY * QZ;
+        QQuaternion Q = QQuaternion::fromEulerAngles(m_rotation);
 
         m_modelMatrix.setToIdentity();
         m_modelMatrix.translate(m_position);
-        m_modelMatrix.rotate(rotation);
+        m_modelMatrix.rotate(Q);
         m_modelMatrix.scale(m_scale);
 
         m_dirty = false;

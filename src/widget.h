@@ -1,7 +1,6 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include "game/plain.h"
 #include "game/level.h"
 
 #include <qopengldebug.h>
@@ -14,7 +13,6 @@
 #include <QTimer>
 
 #include "hud.h"
-//#include "actor.h"
 #include "game_console.h"
 
 QT_BEGIN_NAMESPACE
@@ -39,35 +37,18 @@ protected:
 private:
     Ui::Widget *ui;
     QTimer * m_frameTimer;
-    float m_angle = 0.0f;
+    QOpenGLDebugLogger* m_openglLogger{ nullptr };
 
-    GLuint m_vbo = 0;
-    GLuint m_vao = 0;
-    QOpenGLShaderProgram* m_programShader;
-    QMap<std::string, QOpenGLTexture*> textureMap;
-    
     Level* m_level;
     Hud * m_hud;
-    //Actor * m_actor;
     GameConsole * m_consoleWidget;
     MovementState m_movementState;
-    RenderGeometry* plain{ nullptr };
-
-    QOpenGLDebugLogger* m_openglLogger{ nullptr };
-    
-
-    std::vector<QVector3D> elemPosWalls {QVector3D(0.0f,0.0f,0.0f)};
-    QVector3D tempPos3DWalls;
-
-    QVector3D direction {QVector3D(1.5f, 2.0f, 10.0f)};
-    
-    void drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QMatrix4x4 view);
 
     void setup();
-
     void mouseMove();
-    Q_SLOT void frameTick();
 
+    Q_SLOT void cleanup();
+    Q_SLOT void frameTick();
 
 protected:
     void closeEvent(QCloseEvent *event) override;

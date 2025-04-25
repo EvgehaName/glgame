@@ -68,4 +68,9 @@ RenderGeometry::~RenderGeometry()
 		pIndexBuffer->destroy();
 		pIndexBuffer = nullptr;
 	}
+
+#ifdef QT_DEBUG
+	qDebug() << Q_FUNC_INFO;
+#endif // QT_DEBUG
+
 }

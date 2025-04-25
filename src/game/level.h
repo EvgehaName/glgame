@@ -14,14 +14,15 @@ public:
 	void update(const MovementState& movement);
 	void render();
 
+	void createRoom(int size);
 	void onAxisMove(int dx, int dy);
 	void onFramebufferResize(int width, int height);
 
 private:
-	Actor* m_actor;
-	Plain* m_floor;
-	Plain* m_walls[4];
-	QMatrix4x4 m_modeles[4];
+	std::unique_ptr<Actor> m_actor;
+	std::vector<std::unique_ptr<Plain>> m_floor;
+	std::vector<std::unique_ptr<Plain>> m_walls;
+
 	QMatrix4x4 m_projection;
 	QOpenGLTexture* m_wallTexture;
 	QOpenGLTexture* m_floorTexture;

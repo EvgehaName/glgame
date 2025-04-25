@@ -1,10 +1,20 @@
 #pragma once
 #include "../render/geom.h"
 
+#ifdef QT_DEBUG
+#define SET_DEBUG_NAME(obj, name) (obj)->debugName = (name)
+#else
+#define SET_DEBUG_NAME(obj, name)
+#endif
+
 class GameObject
 {
 public:    
     GameObject();
+
+#ifdef QT_DEBUG
+    QString debugName;
+#endif // QT_DEBUG
 
     void moveX(float offset);
     void moveY(float offset);
