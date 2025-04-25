@@ -1,8 +1,10 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include "game/cube.h"
+#include "game/plain.h"
+#include "game/level.h"
 
+#include <qopengldebug.h>
 #include <qopenglwidget.h>
 #include <qopenglfunctions_4_3_core.h>
 
@@ -12,7 +14,7 @@
 #include <QTimer>
 
 #include "hud.h"
-#include "actor.h"
+//#include "actor.h"
 #include "game_console.h"
 
 QT_BEGIN_NAMESPACE
@@ -44,12 +46,14 @@ private:
     QOpenGLShaderProgram* m_programShader;
     QMap<std::string, QOpenGLTexture*> textureMap;
     
+    Level* m_level;
     Hud * m_hud;
-    Actor * m_actor;
+    //Actor * m_actor;
     GameConsole * m_consoleWidget;
     MovementState m_movementState;
-    RenderGeometry* cube{ nullptr };
+    RenderGeometry* plain{ nullptr };
 
+    QOpenGLDebugLogger* m_openglLogger{ nullptr };
     
 
     std::vector<QVector3D> elemPosWalls {QVector3D(0.0f,0.0f,0.0f)};

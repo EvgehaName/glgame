@@ -2,40 +2,57 @@
 
 RenderGeometry::RenderGeometry()
 {
+	pVertexArray = new QOpenGLVertexArrayObject();
+	Q_ASSERT(pVertexArray->create());
+	pVertexArray->bind();
+
 	pVertexBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
 	pVertexBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
 	Q_ASSERT(pVertexBuffer->create());
+	Q_ASSERT(pVertexBuffer->bind());
 
 	pIndexBuffer = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+	pIndexBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
 	Q_ASSERT(pIndexBuffer->create());
+	Q_ASSERT(pIndexBuffer->bind());
 
-	pVertexArray = new QOpenGLVertexArrayObject();
-	Q_ASSERT(pVertexArray->create());
+	QOpenGLFunctions* f = QOpenGLContext::currentContext()->functions();
+
+	/* position */
+	f->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	f->glEnableVertexAttribArray(0);
+
+	/* normal */
+	f->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	f->glEnableVertexAttribArray(1);
+
+	/* uv */
+	f->glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	f->glEnableVertexAttribArray(2);
 }
 
 void RenderGeometry::render()
 {
-	vertexLayout.enableAttributes(pShader);
-	for (int i = 0; i < textures.size(); i++)
-	{
-		textures[i]->bind(i);
-	}
-
+	pVertexArray->bind();
 	QOpenGLFunctions* f = QOpenGLContext::currentContext()->functions();
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+	f->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
 
-void RenderGeometry::insertTexture(QOpenGLTexture* texture, int slot)
+void RenderGeometry::load(const void* vData, const void* iData, int vSize, int iSize)
 {
-	Q_ASSERT(texture);
-	textures.insert(slot, texture);
+	pVertexArray->bind();
+
+	Q_ASSERT(pVertexBuffer->bind());
+	pVertexBuffer->allocate(vData, vSize);
+
+	Q_ASSERT(pIndexBuffer->bind());
+	pIndexBuffer->allocate(iData, iSize);
 }
 
 void RenderGeometry::setShader(QOpenGLShaderProgram* shader)
 {
 	Q_ASSERT(shader); 
-	if (pShader != shader)
-	{
+	if (pShader != shader) {
 		pShader = shader;
 	}
 }
@@ -51,59 +68,4 @@ RenderGeometry::~RenderGeometry()
 		pIndexBuffer->destroy();
 		pIndexBuffer = nullptr;
 	}
-}
-
-void VertexLayout::addAttribute(GLenum type, GLint size, GLboolean normalized, GLsizei stride, GLsizei offset)
-{
-	VertexAttribute attr{};
-	attr.type        = type;
-	attr.size        = size;
-	attr.normalized  = normalized;
-	attr.stride      = stride;
-	attr.offset      = offset;
-	
-	addAttribute(attr);
-}
-
-void VertexLayout::addAttribute(const VertexAttribute& attr)
-{
-	m_attributes.append(attr);
-
-	switch (attr.type) {
-		case GL_FLOAT: 
-			m_stride += attr.size * sizeof(GLfloat); 
-			break;
-		case GL_INT: 
-			m_stride += attr.size * sizeof(GLint);
-			break;
-		case GL_UNSIGNED_INT: 
-			m_stride += attr.size * sizeof(GLuint);
-			break;
-		case GL_SHORT: 
-			m_stride += attr.size * sizeof(GLshort);
-			break;
-		case GL_UNSIGNED_SHORT: 
-			m_stride += attr.size * sizeof(GLushort);
-			break;
-		case GL_BYTE: 
-			m_stride += attr.size * sizeof(GLbyte);
-			break;
-		case GL_UNSIGNED_BYTE: 
-			m_stride += attr.size * sizeof(GLubyte);
-			break;
-	default: break;
-	}
-}
-
-void VertexLayout::enableAttributes(QOpenGLShaderProgram* program)
-{
-	Q_ASSERT(program);
-
-	for (int i = 0; i < m_attributes.size(); ++i) {
-		const VertexAttribute& attr = m_attributes[i];
-		program->enableAttributeArray(i);
-		program->setAttributeBuffer(i, attr.type, attr.offset, attr.size, attr.stride);
-	}
-
-	m_enabledAttr = true;
 }

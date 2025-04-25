@@ -51,6 +51,18 @@ void Widget::initializeGL()
     printf("    Name: %s\n", systemInfo.prettyProductName().toStdString().c_str());
     printf("    Version: %s\n", systemInfo.productVersion().toStdString().c_str());
     
+#ifdef QT_DEBUG
+    m_openglLogger = new QOpenGLDebugLogger(this);
+    QObject::connect(m_openglLogger, &QOpenGLDebugLogger::messageLogged, this, 
+        [](QOpenGLDebugMessage message) {
+            qDebug() << message;
+    }, Qt::DirectConnection);
+
+    Q_ASSERT(m_openglLogger->initialize());
+    m_openglLogger->startLogging(QOpenGLDebugLogger::SynchronousLogging);
+    m_openglLogger->enableMessages();
+#endif // QT_DEBUG
+
     setup();
 }
 
@@ -59,37 +71,43 @@ void Widget::resizeGL(int width, int height)
     glViewport(0,0, width, height);
 
     m_hud->onResize(width, height);
+    m_level->onFramebufferResize(width, height);
     m_consoleWidget->setGeometry(0, 0, width, height >> 1);
 }
 
 void Widget::paintGL()
 {
-    m_actor->update();
+    //m_actor->update();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
 
-    m_programShader->bind();
+    //m_programShader->bind();
 
-    QMatrix4x4 projection;
-    projection.perspective(45.0f, width() / float(height()), 0.1f, 100.0f);
+    //QMatrix4x4 projection;
+    //projection.perspective(45.0f, width() / float(height()), 0.1f, 100.0f);
 
-    QMatrix4x4 view = m_actor->camera()->viewMatrix();
-    view.translate(0.0f,-0.3f,-2.0f);
+    /*QMatrix4x4 view = m_actor->camera()->viewMatrix();*/
+    //view.translate(0.0f,-0.3f,-2.0f);
 
-    m_programShader->setUniformValue("uProjection", projection);
-    m_programShader->setUniformValue("uView", view);
+    //m_programShader->setUniformValue("uProjection", projection);
+    //m_programShader->setUniformValue("uView", view);
     
     direction.normalize();
 
-    m_programShader->setUniformValue("uLightBase.direction", direction.x(), direction.y(), direction.z());
-    m_programShader->setUniformValue("uLightBase.ambient", 0.5f, 0.5f, 0.5f);
-    m_programShader->setUniformValue("uLightBase.diffuse", 1.3f, 1.3f, 0.3f);
-    m_programShader->setUniformValue("uLightBase.specular", 1.0f, 1.0f, 1.0f);
-    m_programShader->setUniformValue("uLightColor", 1.0f, 1.0f, 1.0f);
-    m_programShader->setUniformValue("uViewPos", m_actor->camera()->position());
+    //m_programShader->setUniformValue("uLightBase.direction", direction.x(), direction.y(), direction.z());
+    //m_programShader->setUniformValue("uLightBase.ambient", 0.5f, 0.5f, 0.5f);
+    //m_programShader->setUniformValue("uLightBase.diffuse", 1.3f, 1.3f, 0.3f);
+    //m_programShader->setUniformValue("uLightBase.specular", 1.0f, 1.0f, 1.0f);
+    //m_programShader->setUniformValue("uLightColor", 1.0f, 1.0f, 1.0f);
+//    m_programShader->setUniformValue("uViewPos", m_actor->camera()->position());
 
-    drawRoom(2,4,projection, view);
+    m_level->render();
+
+    //if (plain)
+    //    plain->render();
+
+    //drawRoom(2,4,projection, view);
 }
 
 
@@ -180,9 +198,6 @@ void Widget::drawRoom(int countHeight, int countWidht, QMatrix4x4 projection, QM
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }        
     }
-
-    if (cube)
-        cube->render();
 }
 
 void Widget::setup()
@@ -265,10 +280,11 @@ void Widget::setup()
         glBindVertexArray(0);
     }
 
-    m_actor = new Actor();
+    //m_actor = new Actor();
 
-    cube = new Cube();
-    cube->setShader(m_programShader);
+    m_level = new Level();
+    plain = new Plain();
+    plain->setShader(m_programShader);
 }
 
 void Widget::mouseMove()
@@ -284,7 +300,8 @@ void Widget::mouseMove()
     if (!offsetx && !offsety)
         return;
 
-    m_actor->onRotate(offsetx, offsety);
+    m_level->onAxisMove(offsetx, offsety);
+    //m_actor->onRotate(offsetx, offsety);
 
     /* Центрируем курсор */
     QCursor::setPos(windowCenter);
@@ -298,7 +315,8 @@ void Widget::frameTick()
     }
 
     mouseMove();
-    m_actor->onAction(m_movementState, 16.0f);
+    m_level->update(m_movementState);
+    //m_actor->onAction(m_movementState, 16.0f);
 
     /* OpenGL */
     update();
@@ -309,7 +327,7 @@ void Widget::closeEvent(QCloseEvent *event)
     makeCurrent();
     delete m_programShader;
 
-    delete m_actor;
+    //delete m_actor;
 
     textureMap["wall"]->destroy();
     textureMap["floor"]->destroy();
@@ -320,6 +338,7 @@ void Widget::closeEvent(QCloseEvent *event)
 
 void Widget::keyPressEvent(QKeyEvent *event)
 {
+    qDebug() << "F";
     /* Скрытие или показ окна консоли */
     if (event->key() == Qt::Key_QuoteLeft) {
         if (m_consoleWidget->isHidden()) {

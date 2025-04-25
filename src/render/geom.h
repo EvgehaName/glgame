@@ -17,31 +17,6 @@ public:
 		position(pos), normal(norm), uv(uv) { }
 };
 
-class VertexLayout
-{
-public:
-	struct VertexAttribute
-	{
-		GLenum type;           // Тип данных (GL_FLOAT, GL_INT и т.д.)
-		GLint size;            // Количество компонентов (1, 2, 3, 4)
-		GLboolean normalized;  // Нормализовать ли данные
-		GLsizei stride;        // Шаг между атрибутами
-		GLsizei offset;        // Смещение в байтах
-	};
-
-	void addAttribute(GLenum type, GLint size, GLboolean normalized = GL_FALSE, GLsizei stride = 0, GLsizei offset = 0);
-	void addAttribute(const VertexAttribute& attr);
-	void enableAttributes(QOpenGLShaderProgram* program);
-
-	inline bool isEnabledAttr() const { return m_enabledAttr;}
-	inline GLsizei getStride() const { return m_stride; }
-
-private:
-	QVector<VertexAttribute> m_attributes;
-	bool m_enabledAttr{ false };
-	GLsizei m_stride{ 0 };
-};
-
 class IRenderGeometry {
 public:
 	QOpenGLBuffer* pVertexBuffer{ nullptr };
@@ -54,14 +29,11 @@ public:
 	RenderGeometry();
 
 	virtual void render();
-	virtual void load(const void* vData, const void* iData, int vSize, int iSize) = 0;
+	virtual void load(const void* vData, const void* iData, int vSize, int iSize);
 
-	void insertTexture(QOpenGLTexture* texture, int slot);
 	void setShader(QOpenGLShaderProgram* shader);
 	virtual ~RenderGeometry();
 protected:
-	QVector<QOpenGLTexture*> textures;
-	VertexLayout vertexLayout;
 	QOpenGLVertexArrayObject* pVertexArray{ nullptr };
 	QOpenGLShaderProgram* pShader{ nullptr };
 };
