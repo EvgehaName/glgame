@@ -1,4 +1,5 @@
 #include "widget.h"
+#include "close_handler.h"
 
 #include <QApplication>
 
@@ -16,7 +17,10 @@ int main(int argc, char *argv[])
 #endif
     QSurfaceFormat::setDefaultFormat(format);
     
-    Widget w;
+    Widget w;    
+    CloseHandler h;
+    w.installEventFilter(&h);
+
     w.show();
     return a.exec();
 }

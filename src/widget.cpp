@@ -2,6 +2,8 @@
 #include "ui_widget.h"
 
 #include <QSysInfo>
+
+#include "custom_events.h"
 #include "console_commands.h"
 
 Widget::Widget(QWidget *parent)
@@ -92,7 +94,8 @@ void Widget::setup()
     /* Скрывает курсор (если поддерживается) */
     setCursor(Qt::BlankCursor);
 
-    m_consoleWidget->registerCommand("quit", [](const CCommand& cmd) {
+    m_consoleWidget->registerCommand("quit", [&](const CCommand& cmd) {
+        QApplication::sendEvent(this, new QEvent(static_cast<QEvent::Type>(custom_events::Quit)));
         QApplication::quit();
     });
 
