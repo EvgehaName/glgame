@@ -81,11 +81,21 @@ void Widget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_level->render();
+
+#ifdef QT_DEBUG
+    QPainter painter(this);
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("Arial", 16));
+    QString posText = QString("X:%1Y:%2Z:%3").arg(  QString::number(m_level->actor()->camera()->position().x()),
+                                                    QString::number(m_level->actor()->camera()->position().y()),
+                                                    QString::number(m_level->actor()->camera()->position().z()));
+    painter.drawText(10,QWidget::height() - 10,"pos: " + posText);
+#endif //QT_DEBUG
 }
 
 void Widget::setup()
-{
-    glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
+{    
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_DEPTH_TEST);
 
     /* Для отслеживания мыши без удержания LMB */

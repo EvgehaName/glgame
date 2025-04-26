@@ -11,6 +11,7 @@
 #include <QKeyEvent>
 #include <QCursor>
 #include <QTimer>
+#include <QPainter>
 
 #include "hud.h"
 #include "game_console.h"
