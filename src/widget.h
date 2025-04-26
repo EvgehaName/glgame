@@ -15,6 +15,9 @@
 
 #include "hud.h"
 #include "game_console.h"
+#include "audio/audio_context.h"
+#include "audio/audio_loader.h"
+#include "audio/audio_sound.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -44,6 +47,9 @@ private:
     Hud * m_hud;
     GameConsole * m_consoleWidget;
     MovementState m_movementState;
+
+    AudioContext audioContext;
+    AudioSound audioSound;
 
     void setup();
     void mouseMove();

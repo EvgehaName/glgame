@@ -118,6 +118,9 @@ void Widget::setup()
     });
 
     m_level = new Level();
+
+    AudioLoader audioLoader("/home/piok/projects/glgame/src/sound/sound.ogg");
+    audioSound.play(audioLoader.getPCM(), audioLoader.getFormat(), audioLoader.getSampleRate());
 }
 
 void Widget::mouseMove()

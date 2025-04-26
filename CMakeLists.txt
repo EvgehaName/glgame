@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake CACHE STRING "Vcpkg toolchain file")
 project(glgame VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
@@ -24,6 +25,10 @@ source_group(TREE ${CMAKE_SOURCE_DIR}
     ${PROJECT_UIC}
     ${PROJECT_RCC}
 )
+
+find_package(Ogg CONFIG REQUIRED)
+find_package(Vorbis CONFIG REQUIRED)
+find_package(OpenAL CONFIG REQUIRED)
 
 # https://www.qt.io/blog/versionless-cmake-targets-qt-5.15
 find_package(OpenGL REQUIRED)
@@ -53,5 +58,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt::Core
     ${OPENGL_LIBRARIES}
 )
+target_link_libraries(${PROJECT_NAME} PRIVATE Ogg::ogg)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenAL::OpenAL)
+target_link_libraries(${PROJECT_NAME} PRIVATE Vorbis::vorbisfile)
 
 add_subdirectory(externals)

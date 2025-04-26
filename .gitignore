@@ -7,6 +7,9 @@
 [Bb]in*/
 [Bb]uild*/
 
+# vcpkg installed
+vcpkg_installed
+
 # User-specific files
 *.user
 *.user.props
