@@ -17,6 +17,7 @@ public:
 	void createRoom(int size);
 	void onAxisMove(int dx, int dy);
 	void onFramebufferResize(int width, int height);
+	Actor* actor();
 
 private:
 	std::unique_ptr<Actor> m_actor;

@@ -136,3 +136,8 @@ void Level::onFramebufferResize(int width, int height)
 {
     m_projection.perspective(65, width / float(height), 0.1f, 100.0f);
 }
+
+Actor *Level::actor()
+{
+    return m_actor.get();
+}
