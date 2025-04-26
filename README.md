@@ -17,4 +17,5 @@ All required libraries are already in repository as plain files or as submodules
     - You can just push `Open in Desktop` if you are using Github Desktop.
     - Then type this command in the Git console `git submodule update --init --recursive`
     - If this command fails for any reason, use `git submodule sync` and then retry the above command.
+    - Then type this command in the console 'cd vcpkg; .\bootstrap-vcpkg.bat'.
 - Now you can build the engine!

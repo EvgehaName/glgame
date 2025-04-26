@@ -5,7 +5,8 @@
       "hidden": true,
       "name": "Qt",
       "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "$env{QTDIR}"
+        "CMAKE_PREFIX_PATH": "$env{QTDIR}",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
       },
       "vendor": {
         "qt-project.org/Qt": {
