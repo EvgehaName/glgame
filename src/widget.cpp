@@ -81,28 +81,52 @@ void Widget::resizeGL(int width, int height)
 
 void Widget::paintGL()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_level->render();
-
-    m_dbgRender->render(m_level->getViewProjection());
-
-#ifdef QT_DEBUG
     QPainter painter(this);
+
+    /* Notify QPainter that we are going to start drawing with OpenGL */
+    painter.beginNativePainting();
+    {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        /* Some sensible OpenGL settings */
+        glFrontFace(GL_CW);
+        glCullFace(GL_FRONT);
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+
+        m_level->render();
+#ifdef QT_DEBUG
+        m_dbgRender->render(m_level->getViewProjection());
+#endif // QT_DEBUG
+    }
+
+    /* QPainter expects the following settings */
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_SCISSOR_TEST);
+    glDisable(GL_BLEND);
+
+    /* When we have finished with OpenGL we have to call the following function to notify QPainter */
+    painter.endNativePainting();
+
+    /* Over draw using QPainter */
+#ifdef QT_DEBUG
     painter.setPen(Qt::white);
     painter.setFont(QFont("Arial", 16));
     QString posText = QString("X:%1Y:%2Z:%3").arg(  QString::number(m_level->actor()->camera()->position().x()),
                                                     QString::number(m_level->actor()->camera()->position().y()),
                                                     QString::number(m_level->actor()->camera()->position().z()));
     painter.drawText(10,QWidget::height() - 10,"pos: " + posText);
-#endif //QT_DEBUG
+#endif // QT_DEBUG
 
+    /* End draw QPainter */
+    painter.end();
 }
 
 void Widget::setup()
 {    
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glEnable(GL_DEPTH_TEST);
-
     /* Для отслеживания мыши без удержания LMB */
     setMouseTracking(true);
 
@@ -134,13 +158,13 @@ void Widget::setup()
     Engine::get();
 
     m_level = new Level();
-    m_dbgRender = new DebugRenderer();
-    m_dbgRender->drawAllGeom();
 
-    audioLoader = new AudioLoader("/home/piok/projects/glgame/src/sound/audio.ogg");
+    audioLoader = new AudioLoader("D:\\Projects\\glgame\\src\\sound\\step.ogg");
     audioSound = new AudioSound(audioLoader->getPCM(), audioLoader->getFormat(), audioLoader->getSampleRate());
     LevelParser::parse(":/data/room.json", m_level);
 
+        m_dbgRender = new DebugRenderer();
+    m_dbgRender->drawAllGeom();
 }
 
 void Widget::mouseMove()

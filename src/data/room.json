@@ -78,37 +78,37 @@
     {
       "name": "wall_right_side_0",
       "position": [-2, 0, 1],
-      "rotation": [0, 360, 0],
+      "rotation": [0, 180, 0],
       "scale": [1, 1, 1]
     },
     {
       "name": "wall_right_side_1",
       "position": [0, 0, 1],
-      "rotation": [0, 360, 0],
+      "rotation": [0, 180, 0],
       "scale": [1, 1, 1]
     },
     {
       "name": "wall_right_side_2",
       "position": [2, 0, 1],
-      "rotation": [0, 360, 0],
+      "rotation": [0, 180, 0],
       "scale": [1, 1, 1]
     },
     {
       "name": "wall_forward_side_0",
       "position": [3, 0, -4],
-      "rotation": [0, 90, 0],
+      "rotation": [0, -90, 0],
       "scale": [1, 1, 1]
     },
     {
       "name": "wall_forward_side_1",
       "position": [3, 0, -2],
-      "rotation": [0, 90, 0],
+      "rotation": [0, -90, 0],
       "scale": [1, 1, 1]
     },
     {
       "name": "wall_forward_side_2",
       "position": [3, 0, 0],
-      "rotation": [0, 90, 0],
+      "rotation": [0, -90, 0],
       "scale": [1, 1, 1]
     },
     {
