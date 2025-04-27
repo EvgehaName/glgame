@@ -26,9 +26,7 @@ source_group(TREE ${CMAKE_SOURCE_DIR}
     ${PROJECT_RCC}
 )
 
-find_package(Ogg CONFIG REQUIRED)
-find_package(Vorbis CONFIG REQUIRED)
-find_package(OpenAL CONFIG REQUIRED)
+
 
 # https://www.qt.io/blog/versionless-cmake-targets-qt-5.15
 find_package(OpenGL REQUIRED)
@@ -48,7 +46,16 @@ add_executable(${PROJECT_NAME}
 # External libraries
 #--------------------------------------------------------------------------
 find_package(ode CONFIG REQUIRED)
+
+find_package(Ogg CONFIG REQUIRED)
+find_package(Vorbis CONFIG REQUIRED)
+find_package(OpenAL CONFIG REQUIRED)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE ODE::ODE)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Ogg::ogg)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenAL::OpenAL)
+target_link_libraries(${PROJECT_NAME} PRIVATE Vorbis::vorbisfile)
 
 if(Qt6_FOUND)
     target_link_libraries(${PROJECT_NAME}
@@ -64,8 +71,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt::Core
     ${OPENGL_LIBRARIES}
 )
-target_link_libraries(${PROJECT_NAME} PRIVATE Ogg::ogg)
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenAL::OpenAL)
-target_link_libraries(${PROJECT_NAME} PRIVATE Vorbis::vorbisfile)
+
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
