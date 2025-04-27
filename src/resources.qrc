@@ -4,5 +4,6 @@
         <file>textures/floor_basecolor.png</file>
         <file>fragmentShader.glsl</file>
         <file>vertexShader.glsl</file>
+        <file>data/room.json</file>
     </qresource>
 </RCC>

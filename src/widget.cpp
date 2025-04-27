@@ -5,6 +5,8 @@
 
 #include "custom_events.h"
 #include "console_commands.h"
+#include "core/engine.h"
+#include "core/level_parser.h"
 
 Widget::Widget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -81,6 +83,8 @@ void Widget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_level->render();
+
+    m_dbgRender->render(m_level->getViewProjection());
 }
 
 void Widget::setup()
@@ -107,7 +111,14 @@ void Widget::setup()
         }
     });
 
+    /* Initialize */
+    Engine::get();
+
     m_level = new Level();
+    LevelParser::parse(":/data/room.json", m_level);
+
+    m_dbgRender = new DebugRenderer();
+    m_dbgRender->drawAllGeom();
 }
 
 void Widget::mouseMove()

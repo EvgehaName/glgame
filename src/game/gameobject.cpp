@@ -1,4 +1,5 @@
 #include "gameobject.h"
+#include <qjsonarray.h>
 
 GameObject::GameObject()
     : m_scale(1.0f, 1.0f, 1.0f)
@@ -7,6 +8,21 @@ GameObject::GameObject()
     , m_dirty(true)
 {
     m_modelMatrix.setToIdentity();
+}
+
+GameObject::GameObject(const QJsonArray& pos, const QJsonArray& rot, const QJsonArray& scl)
+{
+    m_position.setX(pos[0].toDouble());
+    m_position.setY(pos[1].toDouble());
+    m_position.setZ(pos[2].toDouble());
+
+    m_rotation.setX(rot[0].toDouble());
+    m_rotation.setY(rot[1].toDouble());
+    m_rotation.setZ(rot[2].toDouble());
+    
+    m_scale.setX(scl[0].toDouble());
+    m_scale.setY(scl[1].toDouble());
+    m_scale.setZ(scl[2].toDouble());
 }
 
 void GameObject::moveX(float offset)
@@ -54,6 +70,7 @@ void GameObject::rotateZ(float angle)
 void GameObject::rotate(const QVector3D& rot)
 {
     m_rotation += rot;
+
     m_dirty = true;
 }
 

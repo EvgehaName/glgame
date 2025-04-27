@@ -4,11 +4,18 @@
 #include <cmath>
 #include <QApplication>
 
-Actor::Actor()
+#include "collision_object.h"
+#include "core/engine.h"
+#include "level.h"
+
+Actor::Actor(Level* level)
+    : m_level(level)
 {
     QString setpath = QApplication::applicationDirPath() + "/config.ini";
     QSettings settings(setpath, QSettings::NativeFormat);
     m_camera.loadSection("actor_cam", settings);
+
+    m_collision = new collision::collision_object(Engine::get().space(), 0.1, 0.5);
 }
 
 void Actor::onAction(const MovementState& state, float deltaTime)
@@ -44,7 +51,16 @@ void Actor::onAction(const MovementState& state, float deltaTime)
 #else
     vAccel = R * vAccel;
 #endif
-    m_position += vAccel * speed * deltaTime;
+
+    QVector3D new_position = m_position + (vAccel * speed * deltaTime);
+    m_collision->set_position(new_position);
+
+    if (!m_level->check_collide(m_collision)) {
+        m_position += vAccel * speed * deltaTime;
+    }
+    else {
+        m_collision->set_position(m_position);
+    }
 }
 
 void Actor::onRotate(int dx, int dy)
