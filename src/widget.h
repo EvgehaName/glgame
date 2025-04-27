@@ -49,6 +49,7 @@ private:
     MovementState m_movementState;
 
     AudioContext audioContext;
+    AudioLoader* audioLoader;
     AudioSound* audioSound;
 
     void setup();

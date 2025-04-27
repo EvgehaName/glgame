@@ -117,11 +117,18 @@ void Widget::setup()
         }
     });
 
+    m_consoleWidget->registerCommand("soundstop", [&](const CCommand& cmd) {
+        audioSound->stop();
+    });
+
+    m_consoleWidget->registerCommand("soundplay", [&](const CCommand& cmd) {
+        audioSound->play(false);
+    });
+
     m_level = new Level();
 
-    AudioLoader audioLoader("/home/piok/projects/glgame/src/sound/sound.ogg");
-    audioSound = new AudioSound(audioLoader.getPCM(), audioLoader.getFormat(), audioLoader.getSampleRate());
-    audioSound->play();
+    audioLoader = new AudioLoader("/home/piok/projects/glgame/src/sound/audio.ogg");
+    audioSound = new AudioSound(audioLoader->getPCM(), audioLoader->getFormat(), audioLoader->getSampleRate());
 }
 
 void Widget::mouseMove()
@@ -193,41 +200,61 @@ void Widget::keyPressEvent(QKeyEvent *event)
     }
 
 
-    if (key == Qt::Key_W) {
+    if (key == Qt::Key_W && !event->isAutoRepeat()) {
        m_movementState.m_forward = true;
+       if(!audioSound->isPlaying())
+       {
+            audioSound->play(true);
+       }
     }
 
-    if (key == Qt::Key_A) {
+    if (key == Qt::Key_A && !event->isAutoRepeat()) {
         m_movementState.m_right = true;
+        if(!audioSound->isPlaying())
+        {
+            audioSound->play(true);
+        }
     }
 
-    if (key == Qt::Key_S) {
+    if (key == Qt::Key_S && !event->isAutoRepeat()) {
         m_movementState.m_back = true;
+        if(!audioSound->isPlaying())
+        {
+            audioSound->play(true);
+        }
     }
 
-    if (key == Qt::Key_D) {
+    if (key == Qt::Key_D && !event->isAutoRepeat()) {
         m_movementState.m_left = true;
+        if(!audioSound->isPlaying())
+        {
+            audioSound->play(true);
+        }
     }
 }
 
 void Widget::keyReleaseEvent(QKeyEvent *event)
 {
-    int key = event->nativeVirtualKey();
+    int key = event->key();
 
-    if (key == Qt::Key_W) {
-       m_movementState.m_forward = false;
+    if (key == Qt::Key_W && !event->isAutoRepeat()) {
+        m_movementState.m_forward = false;
+        audioSound->stop();
     }
 
-    if (key == Qt::Key_A) {
+    if (key == Qt::Key_A && !event->isAutoRepeat()) {
         m_movementState.m_right = false;
+        audioSound->stop();
     }
 
-    if (key == Qt::Key_S) {
+    if (key == Qt::Key_S && !event->isAutoRepeat()) {
         m_movementState.m_back = false;
+        audioSound->stop();
     }
 
-    if (key == Qt::Key_D) {
+    if (key == Qt::Key_D && !event->isAutoRepeat()) {
         m_movementState.m_left = false;
+        audioSound->stop();
     }
 }
 

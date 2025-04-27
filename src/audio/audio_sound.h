@@ -9,8 +9,9 @@ class AudioSound
         AudioSound(const std::vector<char>& pcmData, ALenum format, ALsizei sampleRate);
         ~AudioSound();
 
-        void play();
+        void play(bool isLoopingSound);
         void stop();
+        bool isPlaying();
 
     private:
         ALuint alBuffer;

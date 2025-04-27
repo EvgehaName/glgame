@@ -12,10 +12,18 @@ AudioSound::~AudioSound() {
     alDeleteBuffers(1, &alBuffer);
 }
 
-void AudioSound::play() {
+void AudioSound::play(bool isLoopingSound) {
+    alSourcei(alSource, AL_LOOPING, isLoopingSound);
     alSourcePlay(alSource);
 }
 
 void AudioSound::stop() {
     alSourceStop(alSource);
+}
+
+bool AudioSound::isPlaying()
+{
+    ALint sourceState;
+    alGetSourcei(alSource, AL_SOURCE_STATE, &sourceState);
+    return AL_PLAYING == sourceState;
 }
