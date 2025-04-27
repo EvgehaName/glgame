@@ -120,7 +120,8 @@ void Widget::setup()
     m_level = new Level();
 
     AudioLoader audioLoader("/home/piok/projects/glgame/src/sound/sound.ogg");
-    audioSound.play(audioLoader.getPCM(), audioLoader.getFormat(), audioLoader.getSampleRate());
+    audioSound = new AudioSound(audioLoader.getPCM(), audioLoader.getFormat(), audioLoader.getSampleRate());
+    audioSound->play();
 }
 
 void Widget::mouseMove()

@@ -49,7 +49,7 @@ private:
     MovementState m_movementState;
 
     AudioContext audioContext;
-    AudioSound audioSound;
+    AudioSound* audioSound;
 
     void setup();
     void mouseMove();

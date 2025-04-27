@@ -1,8 +1,10 @@
 #include "audio_sound.h"
 
-AudioSound::AudioSound() {
+AudioSound::AudioSound(const std::vector<char>& pcmData, ALenum format, ALsizei sampleRate) {
     alGenBuffers(1, &alBuffer);
     alGenSources(1, &alSource);
+    alBufferData(alBuffer, format, pcmData.data(), pcmData.size(), sampleRate);
+    alSourcei(alSource, AL_BUFFER, alBuffer);
 }
 
 AudioSound::~AudioSound() {
@@ -10,9 +12,7 @@ AudioSound::~AudioSound() {
     alDeleteBuffers(1, &alBuffer);
 }
 
-void AudioSound::play(const std::vector<char>& pcmData, ALenum format, ALsizei sampleRate) {
-    alBufferData(alBuffer, format, pcmData.data(), pcmData.size(), sampleRate);
-    alSourcei(alSource, AL_BUFFER, alBuffer);
+void AudioSound::play() {
     alSourcePlay(alSource);
 }
 
