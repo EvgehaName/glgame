@@ -2,6 +2,7 @@
   "dependencies": [
     "libogg",
     "openal-soft",
-    "libvorbis"
+    "libvorbis",
+    "ode"
   ]
 }

@@ -5,5 +5,6 @@ class Plain : public GameObject, public RenderGeometry
 {
 public:
 	Plain();
-	void render() override;
+	Plain(const QJsonArray& pos, const QJsonArray& rot, const QJsonArray& scl);
+	void what() override {};
 };

@@ -5,6 +5,8 @@
 
 #include "custom_events.h"
 #include "console_commands.h"
+#include "core/engine.h"
+#include "core/level_parser.h"
 
 Widget::Widget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -82,6 +84,8 @@ void Widget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     m_level->render();
 
+    m_dbgRender->render(m_level->getViewProjection());
+
 #ifdef QT_DEBUG
     QPainter painter(this);
     painter.setPen(Qt::white);
@@ -91,6 +95,7 @@ void Widget::paintGL()
                                                     QString::number(m_level->actor()->camera()->position().z()));
     painter.drawText(10,QWidget::height() - 10,"pos: " + posText);
 #endif //QT_DEBUG
+
 }
 
 void Widget::setup()
@@ -125,10 +130,17 @@ void Widget::setup()
         audioSound->play(false);
     });
 
+    /* Initialize */
+    Engine::get();
+
     m_level = new Level();
+    m_dbgRender = new DebugRenderer();
+    m_dbgRender->drawAllGeom();
 
     audioLoader = new AudioLoader("/home/piok/projects/glgame/src/sound/audio.ogg");
     audioSound = new AudioSound(audioLoader->getPCM(), audioLoader->getFormat(), audioLoader->getSampleRate());
+    LevelParser::parse(":/data/room.json", m_level);
+
 }
 
 void Widget::mouseMove()

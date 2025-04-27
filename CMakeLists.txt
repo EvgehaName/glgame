@@ -44,6 +44,12 @@ add_executable(${PROJECT_NAME}
     ${PROJECT_RCC}
 )
 
+#--------------------------------------------------------------------------
+# External libraries
+#--------------------------------------------------------------------------
+find_package(ode CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE ODE::ODE)
+
 if(Qt6_FOUND)
     target_link_libraries(${PROJECT_NAME}
       PRIVATE
@@ -62,4 +68,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Ogg::ogg)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenAL::OpenAL)
 target_link_libraries(${PROJECT_NAME} PRIVATE Vorbis::vorbisfile)
 
-add_subdirectory(externals)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)

@@ -1,12 +1,15 @@
 #include "plain.h"
+#include "core/engine.h"
+
+#include <qjsonarray.h>
 
 Plain::Plain()
 {
 	const VertexData vertices[4] = {
-		{ {-1.0f, 1.0f, 0.0f},  {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },  /* нижн€€ права€ вершина */
-		{ {1.0f, 1.0f, 0.0f},   {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f} },  /* верн€€ права€ вершина */
-		{ {1.0f, -1.0f, 0.0f},  {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f} },  /* верхн€€ лева€ вершина */
-		{ {-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },  /* нижн€€ лева€ вершина  */
+        { {-1.0f, 1.0f, 0.0f},  {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f} },
+        { {1.0f, 1.0f, 0.0f},   {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f} },
+        { {1.0f, -1.0f, 0.0f},  {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f} },
+        { {-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f} },
 	};
 
 	const int indices[6] = {
@@ -17,9 +20,17 @@ Plain::Plain()
 	load(vertices, indices, sizeof(vertices), sizeof(indices));
 }
 
-void Plain::render()
+Plain::Plain(const QJsonArray& pos, const QJsonArray& rot, const QJsonArray& scl) : Plain()
 {
-	const QMatrix4x4& model = getModelMatrix();
-	pShader->setUniformValue("uModel", model);
-	RenderGeometry::render();
+    m_position.setX(pos[0].toDouble());
+    m_position.setY(pos[1].toDouble());
+    m_position.setZ(pos[2].toDouble());
+
+    m_rotation.setX(rot[0].toDouble());
+    m_rotation.setY(rot[1].toDouble());
+    m_rotation.setZ(rot[2].toDouble());
+
+    m_scale.setX(scl[0].toDouble());
+    m_scale.setY(scl[1].toDouble());
+    m_scale.setZ(scl[2].toDouble());
 }
