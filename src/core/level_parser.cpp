@@ -69,4 +69,5 @@ bool LevelParser::parse(const QString& filepath, Level* out)
         collision_object_ptr->set_position(collision_position_array);
         out->add_collision_object(collision_object_ptr);
     }
+    return true;
 }
