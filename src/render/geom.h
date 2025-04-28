@@ -21,6 +21,8 @@ class IRenderGeometry {
 public:
 	QOpenGLBuffer* pVertexBuffer{ nullptr };
 	QOpenGLBuffer* pIndexBuffer{ nullptr };
+
+	virtual void render() = 0;
 	virtual ~IRenderGeometry() = default;
 };
 
@@ -31,6 +33,7 @@ public:
 	virtual void render();
 	virtual void load(const void* vData, const void* iData, int vSize, int iSize);
 
+	QOpenGLShaderProgram* shader() const { return pShader;  }
 	void setShader(QOpenGLShaderProgram* shader);
 	virtual ~RenderGeometry();
 protected:

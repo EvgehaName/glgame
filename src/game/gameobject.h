@@ -7,10 +7,14 @@
 #define SET_DEBUG_NAME(obj, name)
 #endif
 
+#include <ode/ode.h>
+
 class GameObject
 {
 public:    
     GameObject();
+
+    GameObject(const QJsonArray& pos, const QJsonArray& rot, const QJsonArray& scl);
 
 #ifdef QT_DEBUG
     QString debugName;
@@ -35,12 +39,14 @@ public:
     void scale(const QVector3D& scale);
     void setScale(const QVector3D& scale);
 
+    // TODO: FIX ME (ITS FOR POLYMORPHIC TYPE)
+    virtual void what() = 0;
     const QMatrix4x4& getModelMatrix() const;
 
 protected:
     QVector3D m_scale;
     QVector3D m_rotation;
     QVector3D m_position;
-    mutable bool m_dirty;
+    mutable bool m_dirty{ false };
     mutable QMatrix4x4 m_modelMatrix;
 };

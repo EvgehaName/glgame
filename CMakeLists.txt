@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
+set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake CACHE STRING "Vcpkg toolchain file")
 project(glgame VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
@@ -25,6 +26,8 @@ source_group(TREE ${CMAKE_SOURCE_DIR}
     ${PROJECT_RCC}
 )
 
+
+
 # https://www.qt.io/blog/versionless-cmake-targets-qt-5.15
 find_package(OpenGL REQUIRED)
 find_package(Qt6 COMPONENTS Core Widgets OpenGLWidgets)
@@ -38,6 +41,21 @@ add_executable(${PROJECT_NAME}
     ${PROJECT_UIC}
     ${PROJECT_RCC}
 )
+
+#--------------------------------------------------------------------------
+# External libraries
+#--------------------------------------------------------------------------
+find_package(ode CONFIG REQUIRED)
+
+find_package(Ogg CONFIG REQUIRED)
+find_package(Vorbis CONFIG REQUIRED)
+find_package(OpenAL CONFIG REQUIRED)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ODE::ODE)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Ogg::ogg)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenAL::OpenAL)
+target_link_libraries(${PROJECT_NAME} PRIVATE Vorbis::vorbisfile)
 
 if(Qt6_FOUND)
     target_link_libraries(${PROJECT_NAME}
@@ -54,4 +72,5 @@ target_link_libraries(${PROJECT_NAME}
     ${OPENGL_LIBRARIES}
 )
 
-add_subdirectory(externals)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)

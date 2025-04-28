@@ -5,6 +5,8 @@
 
 #include "custom_events.h"
 #include "console_commands.h"
+#include "core/engine.h"
+#include "core/level_parser.h"
 
 Widget::Widget(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -79,25 +81,52 @@ void Widget::resizeGL(int width, int height)
 
 void Widget::paintGL()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    m_level->render();
-
-#ifdef QT_DEBUG
     QPainter painter(this);
+
+    /* Notify QPainter that we are going to start drawing with OpenGL */
+    painter.beginNativePainting();
+    {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        /* Some sensible OpenGL settings */
+        glFrontFace(GL_CW);
+        glCullFace(GL_FRONT);
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+
+        m_level->render();
+#ifdef QT_DEBUG
+        m_dbgRender->render(m_level->getViewProjection());
+#endif // QT_DEBUG
+    }
+
+    /* QPainter expects the following settings */
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_SCISSOR_TEST);
+    glDisable(GL_BLEND);
+
+    /* When we have finished with OpenGL we have to call the following function to notify QPainter */
+    painter.endNativePainting();
+
+    /* Over draw using QPainter */
+#ifdef QT_DEBUG
     painter.setPen(Qt::white);
     painter.setFont(QFont("Arial", 16));
     QString posText = QString("X:%1Y:%2Z:%3").arg(  QString::number(m_level->actor()->camera()->position().x()),
                                                     QString::number(m_level->actor()->camera()->position().y()),
                                                     QString::number(m_level->actor()->camera()->position().z()));
     painter.drawText(10,QWidget::height() - 10,"pos: " + posText);
-#endif //QT_DEBUG
+#endif // QT_DEBUG
+
+    /* End draw QPainter */
+    painter.end();
 }
 
 void Widget::setup()
 {    
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glEnable(GL_DEPTH_TEST);
-
     /* Для отслеживания мыши без удержания LMB */
     setMouseTracking(true);
 
@@ -117,7 +146,25 @@ void Widget::setup()
         }
     });
 
+    m_consoleWidget->registerCommand("soundstop", [&](const CCommand& cmd) {
+        audioSound->stop();
+    });
+
+    m_consoleWidget->registerCommand("soundplay", [&](const CCommand& cmd) {
+        audioSound->play(false);
+    });
+
+    /* Initialize */
+    Engine::get();
+
     m_level = new Level();
+
+    audioLoader = new AudioLoader("D:\\Projects\\glgame\\src\\sound\\step.ogg");
+    audioSound = new AudioSound(audioLoader->getPCM(), audioLoader->getFormat(), audioLoader->getSampleRate());
+    LevelParser::parse(":/data/room.json", m_level);
+
+        m_dbgRender = new DebugRenderer();
+    m_dbgRender->drawAllGeom();
 }
 
 void Widget::mouseMove()
@@ -189,41 +236,61 @@ void Widget::keyPressEvent(QKeyEvent *event)
     }
 
 
-    if (key == Qt::Key_W) {
+    if (key == Qt::Key_W && !event->isAutoRepeat()) {
        m_movementState.m_forward = true;
+       if(!audioSound->isPlaying())
+       {
+            audioSound->play(true);
+       }
     }
 
-    if (key == Qt::Key_A) {
+    if (key == Qt::Key_A && !event->isAutoRepeat()) {
         m_movementState.m_right = true;
+        if(!audioSound->isPlaying())
+        {
+            audioSound->play(true);
+        }
     }
 
-    if (key == Qt::Key_S) {
+    if (key == Qt::Key_S && !event->isAutoRepeat()) {
         m_movementState.m_back = true;
+        if(!audioSound->isPlaying())
+        {
+            audioSound->play(true);
+        }
     }
 
-    if (key == Qt::Key_D) {
+    if (key == Qt::Key_D && !event->isAutoRepeat()) {
         m_movementState.m_left = true;
+        if(!audioSound->isPlaying())
+        {
+            audioSound->play(true);
+        }
     }
 }
 
 void Widget::keyReleaseEvent(QKeyEvent *event)
 {
-    int key = event->nativeVirtualKey();
+    int key = event->key();
 
-    if (key == Qt::Key_W) {
-       m_movementState.m_forward = false;
+    if (key == Qt::Key_W && !event->isAutoRepeat()) {
+        m_movementState.m_forward = false;
+        audioSound->stop();
     }
 
-    if (key == Qt::Key_A) {
+    if (key == Qt::Key_A && !event->isAutoRepeat()) {
         m_movementState.m_right = false;
+        audioSound->stop();
     }
 
-    if (key == Qt::Key_S) {
+    if (key == Qt::Key_S && !event->isAutoRepeat()) {
         m_movementState.m_back = false;
+        audioSound->stop();
     }
 
-    if (key == Qt::Key_D) {
+    if (key == Qt::Key_D && !event->isAutoRepeat()) {
         m_movementState.m_left = false;
+        audioSound->stop();
     }
 }
 

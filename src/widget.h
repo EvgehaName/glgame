@@ -15,12 +15,18 @@
 
 #include "hud.h"
 #include "game_console.h"
+#include "render/debugrenderer.h"
+#include "audio/audio_context.h"
+#include "audio/audio_loader.h"
+#include "audio/audio_sound.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class Widget;
 }
 QT_END_NAMESPACE
+
+// TODO: Engine (Facade class API)
 
 class Widget : public QOpenGLWidget, protected QOpenGLFunctions_4_3_Core
 {
@@ -45,11 +51,21 @@ private:
     GameConsole * m_consoleWidget;
     MovementState m_movementState;
 
+    AudioContext audioContext;
+    AudioLoader* audioLoader;
+    AudioSound* audioSound;
+    DebugRenderer * m_dbgRender;
+
     void setup();
     void mouseMove();
 
     Q_SLOT void cleanup();
     Q_SLOT void frameTick();
+
+    /* PHYSICS SECTION START */
+    dWorldID world;
+    void initPhysics();
+    /* PHYSICS SECTION END   */
 
 protected:
     void closeEvent(QCloseEvent *event) override;

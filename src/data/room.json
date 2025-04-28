@@ -1,0 +1,155 @@
+{
+    "metadata": {
+      "version": "0.1"
+    },
+    "objects": [
+    {
+      "name": "floor_left_0",
+      "position": [-2, -1, 0],
+      "rotation": [-90, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "floor_left_1",
+      "position": [0, -1, 0],
+      "rotation": [-90, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "floor_left_2",
+      "position": [2, -1, 0],
+      "rotation": [-90, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "floor_central_0",
+      "position": [-2, -1, -2],
+      "rotation": [-90, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "floor_central_1",
+      "position": [0, -1, -2],
+      "rotation": [-90, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "floor_central_2",
+      "position": [2, -1, -2],
+      "rotation": [-90, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "floor_right_0",
+      "position": [-2, -1, -4],
+      "rotation": [-90, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "floor_right_1",
+      "position": [0, -1, -4],
+      "rotation": [-90, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "floor_right_2",
+      "position": [2, -1, -4],
+      "rotation": [-90, 0, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_left_side_0",
+      "position": [-2, 0, -5],
+      "rotation": [0, 360, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_left_side_1",
+      "position": [0, 0, -5],
+      "rotation": [0, 360, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_left_side_2",
+      "position": [2, 0, -5],
+      "rotation": [0, 360, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_right_side_0",
+      "position": [-2, 0, 1],
+      "rotation": [0, 180, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_right_side_1",
+      "position": [0, 0, 1],
+      "rotation": [0, 180, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_right_side_2",
+      "position": [2, 0, 1],
+      "rotation": [0, 180, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_forward_side_0",
+      "position": [3, 0, -4],
+      "rotation": [0, -90, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_forward_side_1",
+      "position": [3, 0, -2],
+      "rotation": [0, -90, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_forward_side_2",
+      "position": [3, 0, 0],
+      "rotation": [0, -90, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_back_side_0",
+      "position": [-3, 0, -4],
+      "rotation": [0, 90, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_back_side_1",
+      "position": [-3, 0, -2],
+      "rotation": [0, 90, 0],
+      "scale": [1, 1, 1]
+    },
+    {
+      "name": "wall_back_side_2",
+      "position": [-3, 0, 0],
+      "rotation": [0, 90, 0],
+      "scale": [1, 1, 1]
+    }      
+  ],
+  "collision_objects" : [
+    {
+      "name": "wall_left_side_collision",
+      "size": [6, 2, 0.01],
+      "position": [0, 0, -5]
+    },
+    {
+      "name": "wall_right_side_collision",
+      "size": [6, 2, 0.01],
+      "position": [0, 0, 1]
+    },
+    {
+      "name": "wall_forward_side_collision",
+      "size": [0.01, 2, 6],
+      "position": [3, 0, -2]
+    },
+    {
+      "name": "wall_back_side_collision",
+      "size": [0.01, 2, 6],
+      "position": [-3, 0, -2]
+    }
+  ]
+}
