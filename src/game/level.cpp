@@ -58,14 +58,14 @@ void Level::render()
     m_shader->bind();
 
     /* Light */
-    auto direction = QVector3D(0.2f, 0.7f, 0.0f);
+    auto direction = QVector3D(1.2f, 0.7f, 0.0f);
     direction.normalize();
 
     m_shader->setUniformValue("uLightBase.direction", direction);
     m_shader->setUniformValue("uLightBase.ambient",   0.5f, 0.5f, 0.5f);
-    m_shader->setUniformValue("uLightBase.diffuse",   1.3f, 1.3f, 0.3f);
+    m_shader->setUniformValue("uLightBase.diffuse",   0.3f, 0.3f, 0.3f);
     m_shader->setUniformValue("uLightBase.specular",  1.0f, 1.0f, 1.0f);
-    m_shader->setUniformValue("uLightColor",          1.0f, 0.95f, 0.9f);
+    m_shader->setUniformValue("uLightColor",          1.0f, 1.0f, 1.0f);
     m_shader->setUniformValue("uViewPos",             m_actor->camera()->position());
 
     /* Camera */

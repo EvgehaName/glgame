@@ -271,7 +271,7 @@ void Widget::keyPressEvent(QKeyEvent *event)
 
 void Widget::keyReleaseEvent(QKeyEvent *event)
 {
-    int key = event->key();
+    int key = event->nativeVirtualKey();
 
     if (key == Qt::Key_W && !event->isAutoRepeat()) {
         m_movementState.m_forward = false;
