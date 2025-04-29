@@ -235,35 +235,26 @@ void Widget::keyPressEvent(QKeyEvent *event)
         }
     }
 
-
     if (key == Qt::Key_W && !event->isAutoRepeat()) {
        m_movementState.m_forward = true;
-       if(!audioSound->isPlaying())
-       {
-            audioSound->play(true);
-       }
     }
 
     if (key == Qt::Key_A && !event->isAutoRepeat()) {
         m_movementState.m_right = true;
-        if(!audioSound->isPlaying())
-        {
-            audioSound->play(true);
-        }
     }
 
     if (key == Qt::Key_S && !event->isAutoRepeat()) {
         m_movementState.m_back = true;
-        if(!audioSound->isPlaying())
-        {
-            audioSound->play(true);
-        }
     }
 
     if (key == Qt::Key_D && !event->isAutoRepeat()) {
         m_movementState.m_left = true;
-        if(!audioSound->isPlaying())
-        {
+    }
+
+    if (m_movementState.m_forward == true || m_movementState.m_back  == true 
+        || m_movementState.m_left == true || m_movementState.m_right == true)
+    {
+        if(!audioSound->isPlaying()) {
             audioSound->play(true);
         }
     }
@@ -275,22 +266,26 @@ void Widget::keyReleaseEvent(QKeyEvent *event)
 
     if (key == Qt::Key_W && !event->isAutoRepeat()) {
         m_movementState.m_forward = false;
-        audioSound->stop();
     }
 
     if (key == Qt::Key_A && !event->isAutoRepeat()) {
         m_movementState.m_right = false;
-        audioSound->stop();
     }
 
     if (key == Qt::Key_S && !event->isAutoRepeat()) {
         m_movementState.m_back = false;
-        audioSound->stop();
     }
 
     if (key == Qt::Key_D && !event->isAutoRepeat()) {
         m_movementState.m_left = false;
-        audioSound->stop();
+    }
+
+    if (m_movementState.m_forward == false && m_movementState.m_back  == false 
+        && m_movementState.m_left == false && m_movementState.m_right == false)
+    {
+        if(audioSound->isPlaying()) {
+            audioSound->stop();
+        }
     }
 }
 
