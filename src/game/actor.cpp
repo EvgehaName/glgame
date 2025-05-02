@@ -21,8 +21,12 @@ Actor::Actor(Level* level)
 void Actor::onAction(const MovementState& state, float deltaTime)
 {
     QVector3D vAccel(0.f, 0.f, 0.f);
-
-    const float speed = 0.0025f;
+    float speed;
+    if (state.m_running) {
+        speed = 0.0050f;
+    } else {
+        speed = 0.0025f;
+    }
 
     if (state.m_forward) {
         vAccel += { 0.0f, 0.0f, 1.0f };
