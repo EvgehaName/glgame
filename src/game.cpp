@@ -1,19 +1,18 @@
-#include "widget.h"
-#include "ui_widget.h"
+#include "game.h"
 
 #include <QSysInfo>
+#include <qapplication.h>
 
 #include "custom_events.h"
 #include "console_commands.h"
 #include "core/engine.h"
-#include "core/level_parser.h"
+#include "application.h"
 
-Widget::Widget(QWidget *parent)
+Game::Game(Application * application, QWidget *parent)
     : QOpenGLWidget(parent)
-    , ui(new Ui::Widget)
+    , m_application(application)
+    , m_level(nullptr)
 {
-    ui->setupUi(this);
-
     // https://stackoverflow.com/questions/35245917/cant-capture-qkeyevent-in-qopenglwidget
     setFocusPolicy(Qt::StrongFocus);
 
@@ -21,21 +20,17 @@ Widget::Widget(QWidget *parent)
     m_consoleWidget->hide();
 
     m_hud = new Hud(this);
-
-    m_frameTimer = new QTimer(this);
-    connect(m_frameTimer, SIGNAL(timeout()), this, SLOT(frameTick()));
-    m_frameTimer->start(1000 / 60.0f);
 }
 
-Widget::~Widget()
+Game::~Game()
 {
-    delete ui;
+    cleanup();
 }
 
-void Widget::initializeGL()
+void Game::initializeGL()
 {
     initializeOpenGLFunctions();
-    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &Widget::cleanup);
+    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &Game::cleanup);
 
     printf("GPU:\n");
     printf("    Vendor: %s\n", glGetString(GL_VENDOR));
@@ -68,9 +63,11 @@ void Widget::initializeGL()
 #endif // QT_DEBUG
 
     setup();
+
+    m_application->onGLContextCreated();
 }
 
-void Widget::resizeGL(int width, int height)
+void Game::resizeGL(int width, int height)
 {
     glViewport(0,0, width, height);
 
@@ -79,7 +76,7 @@ void Widget::resizeGL(int width, int height)
     m_consoleWidget->setGeometry(0, 0, width, height >> 1);
 }
 
-void Widget::paintGL()
+void Game::paintGL()
 {
     QPainter painter(this);
 
@@ -97,7 +94,7 @@ void Widget::paintGL()
 
         m_level->render();
 #ifdef QT_DEBUG
-        m_dbgRender->render(m_level->getViewProjection());
+        //m_dbgRender->render(m_level->getViewProjection());
 #endif // QT_DEBUG
     }
 
@@ -125,8 +122,21 @@ void Widget::paintGL()
     painter.end();
 }
 
-void Widget::setup()
-{    
+void Game::tick(float dt)
+{
+    if (!hasFocus() && !m_consoleWidget->consoleHasFocus()) {
+        return;
+    }
+
+    mouseMove();
+    m_level->update(m_movementState);
+
+    /* OpenGL */
+    update();
+}
+
+void Game::setup()
+{
     /* Для отслеживания мыши без удержания LMB */
     setMouseTracking(true);
 
@@ -157,19 +167,20 @@ void Widget::setup()
     /* Initialize */
     Engine::get();
 
-    m_level = new Level();
+   //m_level = new Level();
 
     audioLoader = new AudioLoader("D:\\Projects\\glgame\\src\\sound\\step.ogg");
     audioSound = new AudioSound(audioLoader->getPCM(), audioLoader->getFormat(), audioLoader->getSampleRate());
-    LevelParser::parse(":/data/room.json", m_level);
 
-        m_dbgRender = new DebugRenderer();
-    m_dbgRender->drawAllGeom();
+    // m_dbgRender = new DebugRenderer();
+    // m_dbgRender->drawAllGeom();
+
+    qDebug() << "setup success";
 }
 
-void Widget::mouseMove()
+void Game::mouseMove()
 {
-    /* Позиция курсора и центр окна в экранных координатах */
+    /* Позиция курсора и центр вьюпорта в экранных координатах */
     QPoint currentPos = QCursor::pos();
     QPoint windowCenter = mapToGlobal(rect().center());
 
@@ -186,42 +197,26 @@ void Widget::mouseMove()
     QCursor::setPos(windowCenter);
 }
 
-Q_SLOT void Widget::cleanup()
+void Game::cleanup()
 {
     makeCurrent();
     {
-        delete m_openglLogger;
-        m_openglLogger = nullptr;
+        if (m_openglLogger) {
+            delete m_openglLogger;
+        }
 
         delete m_level;
-        m_level = nullptr;
-
-        qDebug() << Q_FUNC_INFO << "OpenGL context destroyed";
     }
     doneCurrent();
-    disconnect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &Widget::cleanup);
+    disconnect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &Game::cleanup);
 }
 
-/* Вызывается каждый кадр */
-void Widget::frameTick()
-{
-    if (!hasFocus() && !m_consoleWidget->consoleHasFocus()) {
-        return;
-    }
-
-    mouseMove();
-    m_level->update(m_movementState);
-
-    /* OpenGL */
-    update();
-}
-
-void Widget::closeEvent(QCloseEvent *event)
+void Game::closeEvent(QCloseEvent *event)
 {
 
 }
 
-void Widget::keyPressEvent(QKeyEvent *event)
+void Game::keyPressEvent(QKeyEvent *event)
 {
     int key = event->nativeVirtualKey();
     qDebug() << key;
@@ -260,7 +255,7 @@ void Widget::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void Widget::keyReleaseEvent(QKeyEvent *event)
+void Game::keyReleaseEvent(QKeyEvent *event)
 {
     int key = event->nativeVirtualKey();
 
@@ -289,7 +284,7 @@ void Widget::keyReleaseEvent(QKeyEvent *event)
     }
 }
 
-void Widget::focusOutEvent(QFocusEvent *event)
+void Game::focusOutEvent(QFocusEvent *event)
 {
     QWidget::focusOutEvent(event);
 
