@@ -21,8 +21,9 @@ struct MovementState
     bool m_back;
     bool m_left;
     bool m_right;
+    bool m_running;
 
-    explicit MovementState() : m_forward(false), m_back(false), m_left(false), m_right(false) {}
+    explicit MovementState() : m_forward(false), m_back(false), m_left(false), m_right(false), m_running(false) {}
 };
 
 #endif // ACTIONS_H

@@ -251,6 +251,10 @@ void Widget::keyPressEvent(QKeyEvent *event)
         m_movementState.m_left = true;
     }
 
+    if (key == Qt::Key_Shift) {
+        m_movementState.m_running = true;
+    }
+
     if (m_movementState.m_forward == true || m_movementState.m_back  == true 
         || m_movementState.m_left == true || m_movementState.m_right == true)
     {
@@ -278,6 +282,10 @@ void Widget::keyReleaseEvent(QKeyEvent *event)
 
     if (key == Qt::Key_D && !event->isAutoRepeat()) {
         m_movementState.m_left = false;
+    }
+
+    if (key == Qt::Key_Shift) {
+        m_movementState.m_running = false;
     }
 
     if (m_movementState.m_forward == false && m_movementState.m_back  == false 
