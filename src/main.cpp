@@ -1,7 +1,7 @@
 #include "game.h"
 #include "close_handler.h"
 
-#include <qfile>
+#include <qfile.h>
 #include <qapplication.h>
 #include <qcommandlineparser.h>
 
