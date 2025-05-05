@@ -1,21 +1,15 @@
 #include "actor.h"
+#include "dynamics/physics_world.h"
+#include <qapplication.h>
 
-#include <QDebug>
-#include <cmath>
-#include <QApplication>
-
-#include "collision_object.h"
-#include "core/engine.h"
-#include "level.h"
-
-Actor::Actor(Level* level)
-    : m_level(level)
+Actor::Actor()
 {
     QString setpath = QApplication::applicationDirPath() + "/config.ini";
     QSettings settings(setpath, QSettings::NativeFormat);
     m_camera.loadSection("actor_cam", settings);
 
-    m_collision = new collision::collision_object(Engine::get().space(), 0.1, 0.5);
+    PhysicsWorld& phWorld = PhysicsWorld::getInstance();
+    m_controller = std::make_unique<CharacterController>(phWorld.getWorld(), phWorld.getSpace());
 }
 
 void Actor::onAction(const MovementState& state, float deltaTime)
@@ -52,15 +46,8 @@ void Actor::onAction(const MovementState& state, float deltaTime)
     vAccel = R * vAccel;
 #endif
 
-    QVector3D new_position = m_position + (vAccel * speed * deltaTime);
-    m_collision->set_position(new_position);
-
-    if (!m_level->check_collide(m_collision)) {
-        m_position += vAccel * speed * deltaTime;
-    }
-    else {
-        m_collision->set_position(m_position);
-    }
+    m_controller->setPosition(m_controller->position() + (vAccel * speed * deltaTime));
+    m_position = m_controller->position();
 }
 
 void Actor::onRotate(int dx, int dy)

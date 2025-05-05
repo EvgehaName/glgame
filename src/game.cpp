@@ -5,7 +5,6 @@
 
 #include "custom_events.h"
 #include "console_commands.h"
-#include "core/engine.h"
 #include "application.h"
 
 Game::Game(Application * application, QWidget *parent)
@@ -93,9 +92,6 @@ void Game::paintGL()
         glEnable(GL_DEPTH_TEST);
 
         m_level->render();
-#ifdef QT_DEBUG
-        //m_dbgRender->render(m_level->getViewProjection());
-#endif // QT_DEBUG
     }
 
     /* QPainter expects the following settings */
@@ -164,18 +160,8 @@ void Game::setup()
         audioSound->play(false);
     });
 
-    /* Initialize */
-    Engine::get();
-
-   //m_level = new Level();
-
     audioLoader = new AudioLoader("D:\\Projects\\glgame\\src\\sound\\step.ogg");
     audioSound = new AudioSound(audioLoader->getPCM(), audioLoader->getFormat(), audioLoader->getSampleRate());
-
-    // m_dbgRender = new DebugRenderer();
-    // m_dbgRender->drawAllGeom();
-
-    qDebug() << "setup success";
 }
 
 void Game::mouseMove()

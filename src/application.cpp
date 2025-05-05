@@ -8,8 +8,10 @@
 
 constexpr int MIN_WIDTH = 800;
 constexpr int MIN_HEIGHT = 600;
+constexpr dReal PHYS_WORLD_GRAVITY = -9.81;
 
 #include <qmessagebox.h>
+#include "dynamics/physics_world.h"
 
 Application::Application(bool editorMode)
     : m_game(nullptr)
@@ -82,9 +84,10 @@ void Application::loadLevel(const QString &filepath)
         Level * level = new Level;
         if (m_levelLoader->load(filepath, level))
         {
-            m_levelLoaded = true;
             m_game->setLevel(level);
+            level->onLevelLoaded();
             m_timer->start();
+            m_levelLoaded = true;
         }
         else
         {
@@ -108,6 +111,10 @@ void Application::unloadLevel()
 
 void Application::tick()
 {
+    if (m_levelLoaded) {
+        PhysicsWorld::getInstance().tick(m_dt);
+    }
+
     if (m_activated) {
         m_game->tick(m_dt);
     }
@@ -154,6 +161,8 @@ void Application::setup()
 
 void Application::initialize()
 {
+    PhysicsWorld::getInstance();
+
     m_levelLoaded = new LevelLoader();
     m_audioCtx = new AudioContext();
 }
@@ -172,3 +181,13 @@ void Application::deinitialize()
         m_audioCtx = nullptr;
     }
 }
+
+#include "editor/options_window.h".h"
+void Application::on_options_triggered()
+{
+    OptionsWindow * pOptionsModal = new OptionsWindow(this);
+    pOptionsModal->setWindowModality(Qt::WindowModality::WindowModal);
+    pOptionsModal->show();
+
+}
+

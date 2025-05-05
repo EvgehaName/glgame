@@ -11,10 +11,11 @@
 #include <qjsonobject.h>
 #include <qjsondocument.h>
 
+#include "application.h"
 #include "game/level.h"
-#include "game/collision_object.h"
 #include "game/plain.h"
-#include "core/engine.h"
+#include "dynamics/physics_world.h"
+#include "dynamics/collision/collision_box.h"
 
 constexpr const char* supported_doc_version = "0.1";
 
@@ -54,6 +55,8 @@ bool LevelLoader::load(const QString& filepath, Level* out)
         out->addGameObject(objPtr);
     }
 
+    PhysicsWorld& phWorld = PhysicsWorld::getInstance();
+
     QJsonArray collisionArray = root["collision_objects"].toArray();
     for (const QJsonValue& collisionValue : collisionArray)
     {
@@ -65,8 +68,8 @@ bool LevelLoader::load(const QString& filepath, Level* out)
         QJsonArray col_rot = collisionObject["rotation"].toArray();
         QJsonArray col_scl = collisionObject["scale"].toArray();
 
-        collision::collision_object* collision_object_ptr = new collision::collision_object(Engine::get().space(), sizeArray);
-        collision_object_ptr->set_position(collision_position_array);
+        CollisionBox* collision_object_ptr = new CollisionBox(phWorld.getSpace(), sizeArray);
+        collision_object_ptr->setPosition(collision_position_array);
         out->add_collision_object(collision_object_ptr);
     }
     return true;

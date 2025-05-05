@@ -1,5 +1,5 @@
 #include "debugrenderer.h"
-#include "core/engine.h"
+#include "dynamics/physics_world.h"
 
 DebugRenderer::DebugRenderer()
     : m_initialized(false)
@@ -38,7 +38,7 @@ DebugRenderer::~DebugRenderer()
 
 void DebugRenderer::drawAllGeom()
 {
-    dSpaceID space = Engine::get().space();
+    dSpaceID space = PhysicsWorld::getInstance().getSpace();
 
     int geoms = dSpaceGetNumGeoms(space);
     if (geoms > 0)
@@ -52,9 +52,7 @@ void DebugRenderer::drawAllGeom()
 }
 
 void DebugRenderer::drawGeom(dGeomID geomId)
-{
-    const int type = dGeomGetClass(geomId);
-
+{    
     const dReal* pos = dGeomGetPosition(geomId);
     const dReal* rot = dGeomGetRotation(geomId);
 
@@ -67,12 +65,18 @@ void DebugRenderer::drawGeom(dGeomID geomId)
     modelMatrix.translate(pos[0], pos[1], pos[2]);
     modelMatrix *= R;
 
+    const int type = dGeomGetClass(geomId);
     switch (type) {
         case dBoxClass: {
             dVector3 sides;
             dGeomBoxGetLengths(geomId, sides);
             drawBox(modelMatrix, QVector3D(sides[0], sides[1], sides[2]), Qt::green);
             break;
+        }
+        case dCapsuleClass: {
+            dReal radius, length;
+            dGeomCapsuleGetParams(geomId, &radius, &length);
+            drawCapsule(modelMatrix, radius, length, Qt::blue);
         }
         default:
             break;
@@ -122,6 +126,104 @@ void DebugRenderer::drawBox(const QMatrix4x4 &model, const QVector3D &sides, con
     drawLine(worldVertices[1], worldVertices[5], color);
     drawLine(worldVertices[2], worldVertices[6], color);
     drawLine(worldVertices[3], worldVertices[7], color);
+}
+
+void DebugRenderer::drawCapsule(const QMatrix4x4 &modelMatrix, float radius, float length, const QColor &color)
+{
+    // 1. Отрисовка цилиндрической части
+    drawCylinder(modelMatrix, radius, length, color);
+
+    // 2. Отрисовка верхней полусферы
+    QMatrix4x4 topSphereMatrix = modelMatrix;
+    topSphereMatrix.translate(0, 0, length / 2);
+    drawSphere(topSphereMatrix, radius, color);
+
+    // 3. Отрисовка нижней полусферы
+    QMatrix4x4 bottomSphereMatrix = modelMatrix;
+    bottomSphereMatrix.translate(0, 0, -length / 2);
+    drawSphere(bottomSphereMatrix, radius, color);
+}
+
+void DebugRenderer::drawSphere(const QMatrix4x4 &model, float radius, const QColor &color, int segments, int rings)
+{
+    // Горизонтальные кольца (параллели)
+    for (int i = 0; i < rings; ++i) {
+        float phi1 = M_PI * i / rings;
+        float phi2 = M_PI * (i + 1) / rings;
+
+        float r1 = radius * sin(phi1);
+        float z1 = radius * cos(phi1);
+        float r2 = radius * sin(phi2);
+        float z2 = radius * cos(phi2);
+
+        for (int j = 0; j < segments; ++j) {
+            float theta1 = 2.0f * M_PI * j / segments;
+            float theta2 = 2.0f * M_PI * (j + 1) / segments;
+
+            float x11 = r1 * cos(theta1);
+            float y11 = r1 * sin(theta1);
+            float x12 = r1 * cos(theta2);
+            float y12 = r1 * sin(theta2);
+
+            float x21 = r2 * cos(theta1);
+            float y21 = r2 * sin(theta1);
+            float x22 = r2 * cos(theta2);
+            float y22 = r2 * sin(theta2);
+
+            QVector3D p11(x11, y11, z1);
+            QVector3D p12(x12, y12, z1);
+            QVector3D p21(x21, y21, z2);
+            QVector3D p22(x22, y22, z2);
+
+            // Преобразуем точки в мировые координаты
+            p11 = model * p11;
+            p12 = model * p12;
+            p21 = model * p21;
+            p22 = model * p22;
+
+            // Рисуем линии вдоль параллелей
+            drawLine(p11, p12, color);
+
+            // Рисуем линии вдоль меридианов
+            if (i < rings - 1) {
+                drawLine(p11, p21, color);
+            }
+        }
+    }
+}
+
+void DebugRenderer::drawCylinder(const QMatrix4x4 &model, float radius, float height, const QColor &color, int segments)
+{
+    const float halfHeight = height / 2.0f;
+
+    // Боковая поверхность (вертикальные линии)
+    for (int i = 0; i < segments; ++i) {
+        float angle1 = 2.0f * M_PI * i / segments;
+        float angle2 = 2.0f * M_PI * (i + 1) / segments;
+
+        float x1 = radius * cos(angle1);
+        float y1 = radius * sin(angle1);
+        float x2 = radius * cos(angle2);
+        float y2 = radius * sin(angle2);
+
+        QVector3D bottom1(x1, y1, -halfHeight);
+        QVector3D top1(x1, y1, halfHeight);
+        QVector3D bottom2(x2, y2, -halfHeight);
+        QVector3D top2(x2, y2, halfHeight);
+
+        // Преобразуем точки в мировые координаты
+        bottom1 = model * bottom1;
+        top1 = model * top1;
+        bottom2 = model * bottom2;
+        top2 = model * top2;
+
+        // Рисуем вертикальные линии
+        drawLine(bottom1, top1, color);
+
+        // Рисуем нижнее и верхнее кольцо
+        drawLine(bottom1, bottom2, color);
+        drawLine(top1, top2, color);
+    }
 }
 
 void DebugRenderer::render(const QMatrix4x4 &viewProjectionMatrix)

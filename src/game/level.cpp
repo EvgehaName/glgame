@@ -29,7 +29,6 @@ Level::~Level()
 
 void Level::init()
 {
-    qDebug() << QOpenGLContext::currentContext();
     m_shader = new QOpenGLShaderProgram();
     m_shader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vertexShader.glsl");
     m_shader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fragmentShader.glsl");
@@ -47,7 +46,7 @@ void Level::init()
     m_floorTexture->setMagnificationFilter(QOpenGLTexture::Linear);
     m_floorTexture->setWrapMode(QOpenGLTexture::ClampToEdge);
 
-    m_actor = std::make_unique<Actor>(this);
+    m_actor = std::make_unique<Actor>();
 }
 
 void Level::update(const MovementState& movement)
@@ -85,6 +84,12 @@ void Level::render()
         pRenderable->shader()->setUniformValue("uModel", model);
         pRenderable->render();
     }
+
+#ifdef QT_DEBUG
+        m_dbgRender->drawAllGeom();
+        m_dbgRender->render(getViewProjection());
+        m_dbgRender->clear();
+#endif // QT_DEBUG
 }
 
 void Level::onAxisMove(int dx, int dy)
@@ -110,7 +115,7 @@ void Level::addGameObject(GameObject* ptr)
     m_objects.push_back(ptr);
 }
 
-void Level::add_collision_object(collision::collision_object* collision_ptr)
+void Level::add_collision_object(Collision* collision_ptr)
 {
     Q_ASSERT(collision_ptr);
     m_collisions.push_back(collision_ptr);
@@ -122,13 +127,8 @@ QMatrix4x4 Level::getViewProjection() const
     return m_projection * view;
 }
 
-bool Level::check_collide(collision::collision_object* who_collision_ptr)
+void Level::onLevelLoaded()
 {
-    for (int i = 0; i < m_collisions.size(); i++) {
-        if (who_collision_ptr->check_collide(m_collisions[i])) {
-            return true;
-        }
-    }
-
-    return false;
+    m_dbgRender = new DebugRenderer();
+    m_dbgRender->drawAllGeom();
 }

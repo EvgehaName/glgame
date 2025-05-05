@@ -150,6 +150,11 @@
       "name": "wall_back_side_collision",
       "size": [0.01, 2, 6],
       "position": [-3, 0, -2]
+    },
+    {
+      "name": "wall_floor_collision",
+      "size": [6, 0.01, 6],
+      "position": [0, -1, -2]
     }
   ]
 }

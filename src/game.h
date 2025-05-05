@@ -18,6 +18,7 @@
 #include "render/debugrenderer.h"
 
 #include "core/audio_sound.h"
+#include "dynamics/physics_world.h"
 #include "core/audio_loader.h"
 
 class Application;
@@ -50,7 +51,6 @@ private:
 
     AudioLoader* audioLoader;
     AudioSound* audioSound;
-    DebugRenderer * m_dbgRender;
 
     void setup();
     void mouseMove();

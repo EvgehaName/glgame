@@ -27,6 +27,9 @@ public:
     void drawGeom(dGeomID geomId);
     void drawLine(const QVector3D& start, const QVector3D& end, const QColor& color);
     void drawBox(const QMatrix4x4& model, const QVector3D& sides, const QColor& color);
+    void drawCapsule(const QMatrix4x4 &model, float radius, float length, const QColor &color);
+    void drawSphere(const QMatrix4x4 &model, float radius, const QColor &color, int segments = 16, int rings = 8);
+    void drawCylinder(const QMatrix4x4 &model, float radius, float height, const QColor &color, int segments = 16);
 
     void render(const QMatrix4x4& viewProjectionMatrix);
     void clear();

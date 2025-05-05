@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         parser.showHelp();
     }
 
-    bool editorMode = false;
+    bool editorMode = true;
 #ifdef QT_DEBUG
     if (parser.isSet(editorOption)) {
         editorMode = true;

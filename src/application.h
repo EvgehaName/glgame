@@ -9,6 +9,8 @@
 #include <QMainWindow>
 #include <QEvent>
 
+#include <ode/ode.h>
+
 #include "game.h"
 #include "core/audio_context.h"
 #include "core/level_loader.h"
@@ -36,6 +38,9 @@ public:
 
 protected:
     void changeEvent(QEvent *event);
+
+private slots:
+    void on_options_triggered();
 
 private:
     Game * m_game;

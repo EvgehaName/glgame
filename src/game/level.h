@@ -3,7 +3,8 @@
 #include "actor.h"
 #include "plain.h"
 #include "camerabase.h"
-#include "collision_object.h"
+#include "render/debugrenderer.h"
+#include "dynamics/collision/collision_base.h"
 
 class Level
 {
@@ -20,18 +21,20 @@ public:
 	Actor* actor();
 
 	void addGameObject(GameObject* ptr);
-	void add_collision_object(collision::collision_object* collision_ptr);
+    void add_collision_object(Collision* collision_ptr);
     QMatrix4x4 getViewProjection() const;
 
-	bool check_collide(collision::collision_object* who_collision_ptr);
+    void onLevelLoaded();
 
 private:
 	std::vector<GameObject*> m_objects;
-	std::vector<collision::collision_object*> m_collisions;
+    std::vector<Collision*> m_collisions;
 
 	std::unique_ptr<Actor> m_actor;
 	std::vector<std::unique_ptr<Plain>> m_floor;
 	std::vector<std::unique_ptr<Plain>> m_walls;
+
+    DebugRenderer * m_dbgRender;
 
 	QMatrix4x4 m_projection;
 	QOpenGLTexture* m_wallTexture;

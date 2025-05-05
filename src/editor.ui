@@ -133,6 +133,7 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="options"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -226,6 +227,11 @@
   <action name="close_project">
    <property name="text">
     <string>Close Project</string>
+   </property>
+  </action>
+  <action name="options">
+   <property name="text">
+    <string>Options</string>
    </property>
   </action>
  </widget>
