@@ -10,10 +10,15 @@
 
 class Level;
 
-class LevelParser
+class LevelLoader
 {
 public:
-	static bool parse(const QString& filepath, Level* out);
+    LevelLoader() = default;
+
+    bool load(const QString& filepath, Level* out);
+    inline const QString& getLog() const { return m_log; }
+private:
+    QString m_log;
 };
 
 #endif //LEVEL_PARSER_H_INCLUDED

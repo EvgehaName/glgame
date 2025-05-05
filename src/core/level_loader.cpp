@@ -3,7 +3,7 @@
 //	Author		: Denis Eremenko
 //	Copyright (C) Denis Eremenko - 2025
 ////////////////////////////////////////////////////////////////////////////
-#include "level_parser.h"
+#include "level_loader.h"
 
 #include <qfile.h>
 #include <qjsonvalue.h>
@@ -18,7 +18,7 @@
 
 constexpr const char* supported_doc_version = "0.1";
 
-bool LevelParser::parse(const QString& filepath, Level* out)
+bool LevelLoader::load(const QString& filepath, Level* out)
 {
     QFile file(filepath);
     if (!file.open(QIODevice::ReadOnly)) {
