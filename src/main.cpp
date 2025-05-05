@@ -1,11 +1,34 @@
-#include "widget.h"
+#include "game.h"
 #include "close_handler.h"
 
-#include <QApplication>
+#include <qfile.h>
+#include <qapplication.h>
+#include <qcommandlineparser.h>
+
+#include "application.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
+    QCommandLineParser parser;
+
+    QCommandLineOption helpOption(QStringList() << "help", "shows this help");
+    QCommandLineOption editorOption(QStringList() << "editor", "run editor");
+    
+    parser.addOption(helpOption);
+    parser.addOption(editorOption);
+    parser.process(app);
+
+    if (parser.isSet(helpOption)) {
+        parser.showHelp();
+    }
+
+    bool editorMode = false;
+#ifdef QT_DEBUG
+    if (parser.isSet(editorOption)) {
+        editorMode = true;
+    }
+#endif // QT_DEBUG
     
     QSurfaceFormat format;
     format.setDepthBufferSize(24);
@@ -17,10 +40,15 @@ int main(int argc, char *argv[])
 #endif
     QSurfaceFormat::setDefaultFormat(format);
     
-    Widget w;    
-    CloseHandler h;
-    w.installEventFilter(&h);
+    // game w;
+    // CloseHandler h;
+    // w.installEventFilter(&h);
 
-    w.show();
-    return a.exec();
+    // w.show();
+
+
+    Application engine(editorMode);
+    engine.show();
+
+    return app.exec();
 }

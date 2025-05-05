@@ -29,10 +29,13 @@ Level::~Level()
 
 void Level::init()
 {
+    qDebug() << QOpenGLContext::currentContext();
     m_shader = new QOpenGLShaderProgram();
     m_shader->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/vertexShader.glsl");
     m_shader->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/fragmentShader.glsl");
-    Q_ASSERT(m_shader->link());
+    if (!m_shader->link()) {
+        qFatal("Failed to link shader program");
+    }
 
     m_wallTexture = new QOpenGLTexture(QImage(":/textures/wall_basecolor.png").mirrored());
     m_wallTexture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
@@ -73,7 +76,7 @@ void Level::render()
     m_shader->setUniformValue("uView", m_actor->camera()->viewMatrix());
 
     m_wallTexture->bind();
-    for (int i = 0; i < m_objects.size(); i++) 
+    for (int i = 0; i < m_objects.size(); i++)
     {
         GameObject* pGameObject = m_objects[i];
         const QMatrix4x4& model = pGameObject->getModelMatrix();

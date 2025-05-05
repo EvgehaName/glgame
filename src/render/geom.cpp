@@ -3,18 +3,24 @@
 RenderGeometry::RenderGeometry()
 {
 	pVertexArray = new QOpenGLVertexArrayObject();
-	Q_ASSERT(pVertexArray->create());
+    if (!pVertexArray->create()) {
+        qFatal("Failed to create vertex array");
+    }
 	pVertexArray->bind();
 
 	pVertexBuffer = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
 	pVertexBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
-	Q_ASSERT(pVertexBuffer->create());
-	Q_ASSERT(pVertexBuffer->bind());
+    if (!pVertexBuffer->create()) {
+        qFatal("Failed to create vertex buffer");
+    }
+    pVertexBuffer->bind();
 
 	pIndexBuffer = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
 	pIndexBuffer->setUsagePattern(QOpenGLBuffer::StaticDraw);
-	Q_ASSERT(pIndexBuffer->create());
-	Q_ASSERT(pIndexBuffer->bind());
+    if (!pIndexBuffer->create()) {
+        qFatal("Failed to create index buffer");
+    }
+    pIndexBuffer->bind();
 
 	QOpenGLFunctions* f = QOpenGLContext::currentContext()->functions();
 
@@ -33,19 +39,19 @@ RenderGeometry::RenderGeometry()
 
 void RenderGeometry::render()
 {
-	pVertexArray->bind();
-	QOpenGLFunctions* f = QOpenGLContext::currentContext()->functions();
-	f->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    pVertexArray->bind();
+    QOpenGLFunctions* f = QOpenGLContext::currentContext()->functions();
+    f->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
 
 void RenderGeometry::load(const void* vData, const void* iData, int vSize, int iSize)
 {
 	pVertexArray->bind();
 
-	Q_ASSERT(pVertexBuffer->bind());
+    pVertexBuffer->bind();
 	pVertexBuffer->allocate(vData, vSize);
 
-	Q_ASSERT(pIndexBuffer->bind());
+    pIndexBuffer->bind();
 	pIndexBuffer->allocate(iData, iSize);
 }
 

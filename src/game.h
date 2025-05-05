@@ -16,25 +16,23 @@
 #include "hud.h"
 #include "game_console.h"
 #include "render/debugrenderer.h"
-#include "audio/audio_context.h"
-#include "audio/audio_loader.h"
-#include "audio/audio_sound.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class Widget;
-}
-QT_END_NAMESPACE
+#include "core/audio_sound.h"
+#include "core/audio_loader.h"
 
-// TODO: Engine (Facade class API)
+class Application;
 
-class Widget : public QOpenGLWidget, protected QOpenGLFunctions_4_3_Core
+class Game : public QOpenGLWidget, protected QOpenGLFunctions_4_3_Core
 {
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr);
-    ~Widget();
+    Game(Application * application, QWidget *parent = nullptr);
+    ~Game();
+
+    inline void setLevel(Level* level) { m_level = level; }
+    inline Level* level() const { return m_level; }
+    void tick(float dt);
 
 protected:
     void initializeGL() override;
@@ -42,16 +40,14 @@ protected:
     void paintGL() override;
 
 private:
-    Ui::Widget *ui;
-    QTimer * m_frameTimer;
+    Application * m_application;
     QOpenGLDebugLogger* m_openglLogger{ nullptr };
-
     Level* m_level;
+
     Hud * m_hud;
     GameConsole * m_consoleWidget;
     MovementState m_movementState;
 
-    AudioContext audioContext;
     AudioLoader* audioLoader;
     AudioSound* audioSound;
     DebugRenderer * m_dbgRender;
@@ -60,7 +56,6 @@ private:
     void mouseMove();
 
     Q_SLOT void cleanup();
-    Q_SLOT void frameTick();
 
     /* PHYSICS SECTION START */
     dWorldID world;
