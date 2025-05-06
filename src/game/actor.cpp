@@ -13,7 +13,9 @@ Actor::Actor(Level* level)
 {
     QString setpath = QApplication::applicationDirPath() + "/config.ini";
     QSettings settings(setpath, QSettings::NativeFormat);
-    m_camera.loadSection("actor_cam", settings);
+    m_cameras[camFirst]->loadSection("actor_cam", settings);
+    m_cameras[camFree]->loadSection("actor_free_cam", settings);
+    activeCam = camFirst;
 
     m_collision = new collision::collision_object(Engine::get().space(), 0.1, 0.5);
 }
@@ -48,7 +50,7 @@ void Actor::onAction(const MovementState& state, float deltaTime)
 
     QMatrix4x4 R;
     R.setToIdentity();
-    R.rotate(qRadiansToDegrees(m_camera.yaw()), {0.0f, 1.0f, 0.0f});
+    R.rotate(qRadiansToDegrees(m_cameras[activeCam]->yaw()), {0.0f, 1.0f, 0.0f});
 
 #if QT_VERSION >= 0x060000
     vAccel = R.map(vAccel);
@@ -72,30 +74,35 @@ void Actor::onRotate(int dx, int dy)
     float fx = static_cast<float>(dx);
     float fy = static_cast<float>(dy);
 
-    const float scale = (m_camera.fov() / m_baseFov) * m_mouseSens * m_mouseSensScale / 50.f / m_lookFactor;
+    const float scale = (m_cameras[activeCam]->fov() / m_baseFov) * m_mouseSens * m_mouseSensScale / 50.f / m_lookFactor;
     constexpr float eps = 0.0000001f;
 
     if (std::abs(fx) > eps) {
         const float dFactor = hDirectionFactor(fx, scale, true);
         EInputScreenDirection dType = toScreenDirection(EInputAxis::Horizontal, dFactor);
-        m_camera.moveCamera(dType, std::abs(dFactor), 16.f);
+        m_cameras[activeCam]->moveCamera(dType, std::abs(dFactor), 16.f);
     }
 
     if (std::abs(fy) > eps) {
         float dFactor = vDirectionFactor(fy, scale, false);
         EInputScreenDirection dType = toScreenDirection(EInputAxis::Vertical, dFactor);
-        m_camera.moveCamera(dType, std::abs(dFactor), 16.f);
+        m_cameras[activeCam]->moveCamera(dType, std::abs(dFactor), 16.f);
     }
 }
 
 void Actor::update()
 {
-    m_camera.update(m_position);
+    m_cameras[activeCam]->update(m_position);
+}
+
+void Actor::changeCamera(CameraBase& activeCamera)
+{
+    if(activeCamera)
 }
 
 CameraBase *Actor::camera()
 {
-    return &m_camera;
+    return m_cameras[activeCam];
 }
 
 float Actor::hDirectionFactor(float x, float scaleX, bool invertX) const
