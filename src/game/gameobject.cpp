@@ -1,6 +1,9 @@
 #include "gameobject.h"
 #include <qjsonarray.h>
 
+#include <qjsonobject.h>
+#include <qtreewidget.h>
+
 GameObject::GameObject()
     : m_scale(1.0f, 1.0f, 1.0f)
     , m_rotation(0.0f, 0.0f, 0.0f)
@@ -25,25 +28,39 @@ GameObject::GameObject(const QJsonArray& pos, const QJsonArray& rot, const QJson
     m_scale.setZ(scl[2].toDouble());
 }
 
-void GameObject::moveX(float offset)
+void GameObject::load(const QJsonObject &config)
 {
-    move({ offset, 0.0f, 0.0f });
+    m_treeItem = new QTreeWidgetItem();
+
+    QString name = config["name"].toString();
+    setName(name);
+
+    auto rot = config["rotation"].toArray();
+    setRotation(QVector3D(rot[0].toDouble(), rot[1].toDouble(), rot[2].toDouble()));
+
+    auto pos = config["position"].toArray();
+    setPosition(QVector3D(pos[0].toDouble(), pos[1].toDouble(), pos[2].toDouble()));
+
+    auto scale = config["scale"].toArray();
+    setScale(QVector3D(scale[0].toDouble(), scale[1].toDouble(), scale[2].toDouble()));
 }
 
-void GameObject::moveY(float offset)
+void GameObject::save(QJsonObject &config)
 {
-    move({ 0.0f, offset, 0.0f });
+
 }
 
-void GameObject::moveZ(float offset)
+void GameObject::setName(const QString &name)
 {
-    move({ 0.0f, 0.0f, offset });
+    m_name = name;
+    if (m_treeItem) {
+        m_treeItem->setText(0, m_name);
+    }
 }
 
-void GameObject::move(const QVector3D& offset)
+const QString &GameObject::getName() const
 {
-    m_position += offset;
-    m_dirty = true;
+    return m_name;
 }
 
 void GameObject::setPosition(const QVector3D& pos)
@@ -52,57 +69,9 @@ void GameObject::setPosition(const QVector3D& pos)
     m_dirty = true;
 }
 
-void GameObject::rotateX(float angle)
-{
-    rotate({ angle, 0.0f, 0.0f });
-}
-
-void GameObject::rotateY(float angle)
-{
-    rotate({ 0.0f, angle, 0.0f });
-}
-
-void GameObject::rotateZ(float angle)
-{
-    rotate({ 0.0f, 0.0f, angle });
-}
-
-void GameObject::rotate(const QVector3D& rot)
-{
-    m_rotation += rot;
-
-    m_dirty = true;
-}
-
 void GameObject::setRotation(const QVector3D& rot)
 {
     m_rotation = rot;
-    m_dirty = true;
-}
-
-void GameObject::scaleX(float factor)
-{
-    scale({ factor, 0.0f, 0.0f });
-}
-
-void GameObject::scaleY(float factor)
-{
-    scale({ 0.0f, factor, 0.0f });
-}
-
-void GameObject::scaleZ(float factor)
-{
-    scale({ 0.0f, 0.0f, factor });
-}
-
-void GameObject::scale(float factor)
-{
-    scale({ factor, factor, factor });
-}
-
-void GameObject::scale(const QVector3D& scale)
-{
-    m_scale += scale;
     m_dirty = true;
 }
 

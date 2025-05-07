@@ -5,9 +5,9 @@
 
 #include "custom_events.h"
 #include "console_commands.h"
-#include "application.h"
+#include "engine.h"
 
-Game::Game(Application * application, QWidget *parent)
+Game::Game(Engine * application, QWidget *parent)
     : QOpenGLWidget(parent)
     , m_application(application)
     , m_level(nullptr)

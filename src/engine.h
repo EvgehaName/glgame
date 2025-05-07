@@ -3,8 +3,8 @@
 //	Author		: Denis Eremenko
 //	Copyright (C) Denis Eremenko - 2025
 ////////////////////////////////////////////////////////////////////////////
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#ifndef ENGINE_H
+#define ENGINE_H
 
 #include <QMainWindow>
 #include <QEvent>
@@ -13,22 +13,24 @@
 
 #include "game.h"
 #include "core/audio_context.h"
-#include "core/level_loader.h"
+
+#include <QTreeWidget>
 
 namespace Ui {
     class Editor;
 }
 
-class Application : public QMainWindow
+class Engine : public QMainWindow
 {
     Q_OBJECT
 public:
-    Application(bool editorMode);
-    ~Application();
+    Engine(bool editorMode);
+    ~Engine();
 
     void loadLevel(const QString& filepath);
     void unloadLevel();
 
+    QTreeWidget * projectTree() const;
     inline bool isEditorMode() const { return m_editorMode; }
 
     void tick();
@@ -46,7 +48,6 @@ private:
     Game * m_game;
     QTimer * m_timer;
     AudioContext * m_audioCtx;
-    LevelLoader * m_levelLoader;
 
     float m_dt;
     bool m_activated;
@@ -60,4 +61,4 @@ private:
     void deinitialize();
 };
 
-#endif // APPLICATION_H
+#endif // ENGINE_H

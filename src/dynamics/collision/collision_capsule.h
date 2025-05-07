@@ -10,6 +10,7 @@
 class CollisionCapsule final : public Collision
 {
 public:
+    explicit CollisionCapsule(dSpaceID space);
     explicit CollisionCapsule(dSpaceID space, dReal r, dReal l);
 
     inline dReal radius() const { return m_radius; }

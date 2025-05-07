@@ -5,6 +5,14 @@
 ////////////////////////////////////////////////////////////////////////////
 #include "collision_capsule.h"
 
+CollisionCapsule::CollisionCapsule(dSpaceID space)
+    : Collision(space)
+    , m_radius(0)
+    , m_length(0)
+{
+
+}
+
 CollisionCapsule::CollisionCapsule(dSpaceID space, dReal r, dReal l)
     : Collision(space), m_radius(r), m_length(l)
 {

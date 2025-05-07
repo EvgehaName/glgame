@@ -132,26 +132,31 @@
   ],
   "collision_objects" : [
     {
+      "type": 1,
       "name": "wall_left_side_collision",
       "size": [6, 2, 0.01],
       "position": [0, 0, -5]
     },
     {
+      "type": 1,
       "name": "wall_right_side_collision",
       "size": [6, 2, 0.01],
       "position": [0, 0, 1]
     },
     {
+      "type": 1,
       "name": "wall_forward_side_collision",
       "size": [0.01, 2, 6],
       "position": [3, 0, -2]
     },
     {
+      "type": 1,
       "name": "wall_back_side_collision",
       "size": [0.01, 2, 6],
       "position": [-3, 0, -2]
     },
     {
+      "type": 1,
       "name": "wall_floor_collision",
       "size": [6, 0.01, 6],
       "position": [0, -1, -2]

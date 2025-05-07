@@ -5,7 +5,7 @@
 #include <qapplication.h>
 #include <qcommandlineparser.h>
 
-#include "application.h"
+#include "engine.h"
 
 int main(int argc, char *argv[])
 {
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     // w.show();
 
 
-    Application engine(editorMode);
+    Engine engine(editorMode);
     engine.show();
 
     return app.exec();

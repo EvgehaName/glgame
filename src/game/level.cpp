@@ -1,4 +1,14 @@
 #include "level.h"
+#include "dynamics/collision/collision_factory.h"
+
+#include <qfile.h>
+#include <qfileinfo.h>
+#include <qtreewidget.h>
+
+#include <qjsonarray.h>
+#include <qjsonobject.h>
+#include <qjsondocument.h>
+#include <qjsonparseerror.h>
 
 Level::Level()
 	: m_shader(nullptr)
@@ -113,6 +123,11 @@ void Level::addGameObject(GameObject* ptr)
     RenderGeometry* pGeom = dynamic_cast<RenderGeometry*>(ptr);
     pGeom->setShader(m_shader);
     m_objects.push_back(ptr);
+
+    /* EDITOR MODE ONLY */
+    if (m_rootItem && ptr->treeItem()) {
+        m_rootItem->addChild(ptr->treeItem());
+    }
 }
 
 void Level::add_collision_object(Collision* collision_ptr)
@@ -125,6 +140,61 @@ QMatrix4x4 Level::getViewProjection() const
 {
     QMatrix4x4 view = m_actor->camera()->viewMatrix();
     return m_projection * view;
+}
+
+bool Level::load(const QString &filepath)
+{
+    QFile file(filepath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << Q_FUNC_INFO << "An error occurred while opening the level file:" << file.errorString();
+        return false;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonParseError parseError;
+    QJsonDocument document = QJsonDocument::fromJson(data, &parseError);
+
+    if (parseError.error != QJsonParseError::NoError) {
+        qWarning() << Q_FUNC_INFO << "An error occurred while reading the project file - " << parseError.offset << ":" << parseError.errorString();
+        return false;
+    }
+
+    QFileInfo finfo(filepath);
+    m_rootItem = new QTreeWidgetItem();
+    m_rootItem->setText(0, finfo.baseName());
+
+    QJsonObject root = document.object();
+    load(root);
+
+    return true;
+}
+
+void Level::load(const QJsonObject& config)
+{
+    QJsonArray objectsArray = config["objects"].toArray();
+    for (const auto &objectValue : std::as_const(objectsArray))
+    {
+        GameObject* pObject = new Plain();
+        pObject->load(objectValue.toObject());
+        addGameObject(pObject);
+    }
+
+    QJsonArray collisionsArray = config["collision_objects"].toArray();
+    for (const auto &objectValue : std::as_const(collisionsArray))
+    {
+        QJsonObject config = objectValue.toObject();
+        Collision* pCollision = CollisionFactory::createCollision(intToCollisionType(config["type"].toInt()));
+        if (pCollision) {
+            pCollision->load(config);
+            add_collision_object(pCollision);
+        } else {
+            qWarning() << Q_FUNC_INFO << "Unsupported collision type";
+        }
+    }
+
+    onLevelLoaded();
 }
 
 void Level::onLevelLoaded()

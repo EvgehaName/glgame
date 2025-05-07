@@ -3,7 +3,7 @@
 //	Author		: Denis Eremenko
 //	Copyright (C) Denis Eremenko - 2025
 ////////////////////////////////////////////////////////////////////////////
-#include "application.h"
+#include "engine.h"
 #include "ui_editor.h"
 
 constexpr int MIN_WIDTH = 800;
@@ -13,11 +13,10 @@ constexpr dReal PHYS_WORLD_GRAVITY = -9.81;
 #include <qmessagebox.h>
 #include "dynamics/physics_world.h"
 
-Application::Application(bool editorMode)
+Engine::Engine(bool editorMode)
     : m_game(nullptr)
     , m_timer(nullptr)
     , m_audioCtx(nullptr)
-    , m_levelLoader(nullptr)
     , m_dt(0.0f)
     , m_activated(false)
     , m_editorMode(editorMode)
@@ -53,11 +52,11 @@ Application::Application(bool editorMode)
 
     m_timer = new QTimer(this);
     m_timer->setInterval(1000 / 60.0f);
-    connect(m_timer, &QTimer::timeout, this, &Application::tick);
+    connect(m_timer, &QTimer::timeout, this, &Engine::tick);
     m_dt = 16;
 }
 
-Application::~Application()
+Engine::~Engine()
 {
     deinitialize();
 
@@ -70,7 +69,7 @@ Application::~Application()
     }
 }
 
-void Application::loadLevel(const QString &filepath)
+void Engine::loadLevel(const QString &filepath)
 {    
     if (!m_glContextValid)
     {
@@ -81,35 +80,35 @@ void Application::loadLevel(const QString &filepath)
     {
         unloadLevel();
 
-        Level * level = new Level;
-        if (m_levelLoader->load(filepath, level))
+        Level* level = new Level;
+        m_levelLoaded = level->load(filepath);
+
+        if (m_levelLoaded)
         {
             m_game->setLevel(level);
-            level->onLevelLoaded();
+            projectTree()->addTopLevelItem(m_game->level()->treeItem());
+
             m_timer->start();
-            m_levelLoaded = true;
-        }
-        else
-        {
-            QMessageBox msgBox;
-            msgBox.critical(this, "Failed to load level", m_levelLoader->getLog());
         }
     }
 }
 
-void Application::unloadLevel()
+void Engine::unloadLevel()
 {
-    if (m_game->level())
-    {
-        m_timer->stop();
+    m_levelLoaded = false;
+    if (m_game->level()) {
         delete m_game->level();
         m_game->setLevel(nullptr);
+        m_timer->stop();
     }
-
-    m_levelLoaded = false;
 }
 
-void Application::tick()
+QTreeWidget *Engine::projectTree() const
+{
+    return m_editor_ui->projectWidget;
+}
+
+void Engine::tick()
 {
     if (m_levelLoaded) {
         PhysicsWorld::getInstance().tick(m_dt);
@@ -120,23 +119,23 @@ void Application::tick()
     }
 }
 
-void Application::onActivate()
+void Engine::onActivate()
 {
 
 }
 
-void Application::onDeactivate()
+void Engine::onDeactivate()
 {
 
 }
 
-void Application::onGLContextCreated()
+void Engine::onGLContextCreated()
 {
     m_glContextValid = true;
     loadLevel(":/data/room.json");
 }
 
-void Application::changeEvent(QEvent *event)
+void Engine::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::ActivationChange)
     {
@@ -152,29 +151,22 @@ void Application::changeEvent(QEvent *event)
     QMainWindow::changeEvent(event);
 }
 
-void Application::setup()
+void Engine::setup()
 {
     setFixedSize(MIN_WIDTH, MIN_HEIGHT);
     m_game = new Game(this, this);
     m_game->resize(width(), height());
 }
 
-void Application::initialize()
+void Engine::initialize()
 {
     PhysicsWorld::getInstance();
-
-    m_levelLoaded = new LevelLoader();
     m_audioCtx = new AudioContext();
 }
 
-void Application::deinitialize()
+void Engine::deinitialize()
 {
     unloadLevel();
-
-    if (m_levelLoader) {
-        delete m_levelLoader;
-        m_levelLoader = nullptr;
-    }
 
     if (m_audioCtx) {
         delete m_audioCtx;
@@ -182,8 +174,8 @@ void Application::deinitialize()
     }
 }
 
-#include "editor/options_window.h".h"
-void Application::on_options_triggered()
+#include "editor/options_window.h"
+void Engine::on_options_triggered()
 {
     OptionsWindow * pOptionsModal = new OptionsWindow(this);
     pOptionsModal->setWindowModality(Qt::WindowModality::WindowModal);

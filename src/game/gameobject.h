@@ -1,52 +1,51 @@
 #pragma once
 #include "../render/geom.h"
 
-#ifdef QT_DEBUG
-#define SET_DEBUG_NAME(obj, name) (obj)->debugName = (name)
-#else
-#define SET_DEBUG_NAME(obj, name)
-#endif
+#include <QObject>
 
-#include <ode/ode.h>
+class QTreeWidgetItem;
 
-class GameObject
+class GameObject : public QObject
 {
 public:    
     GameObject();
 
     GameObject(const QJsonArray& pos, const QJsonArray& rot, const QJsonArray& scl);
 
-#ifdef QT_DEBUG
-    QString debugName;
-#endif // QT_DEBUG
+    virtual void load(const QJsonObject& config);
+    virtual void save(QJsonObject& config);
+    virtual void render() {}
 
-    void moveX(float offset);
-    void moveY(float offset);
-    void moveZ(float offset);
-    void move(const QVector3D& offset);
+    void setName(const QString& name);
+    const QString& getName() const;
+
     void setPosition(const QVector3D& pos);
-
-    void rotateX(float angle);
-    void rotateY(float angle);
-    void rotateZ(float angle);
-    void rotate(const QVector3D& rot);
+    const QVector3D& getPosition() const { return m_position; }
     void setRotation(const QVector3D& rot);
-
-    void scaleX(float factor);
-    void scaleY(float factor);
-    void scaleZ(float factor);
-    void scale(float factor);
-    void scale(const QVector3D& scale);
+    const QVector3D& getRotation() const { return m_rotation; }
     void setScale(const QVector3D& scale);
+    const QVector3D& getScale() const { return m_scale; }
 
     // TODO: FIX ME (ITS FOR POLYMORPHIC TYPE)
     virtual void what() = 0;
     const QMatrix4x4& getModelMatrix() const;
 
+    /* EDITOR MODE ONLY */
+    inline void setTreeItem(QTreeWidgetItem* item) { m_treeItem = item; }
+    QTreeWidgetItem* treeItem() const { return m_treeItem; }
+
 protected:
+
+    /* ATTRIBUTES */
+    QString   m_name;
     QVector3D m_scale;
     QVector3D m_rotation;
     QVector3D m_position;
-    mutable bool m_dirty{ false };
+
+    /* STATE */
+    mutable bool       m_dirty{ false };
     mutable QMatrix4x4 m_modelMatrix;
+
+    /* EDITOR MODE ONLY */
+    QTreeWidgetItem* m_treeItem{nullptr};
 };

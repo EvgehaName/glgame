@@ -16,7 +16,7 @@ Plain::Plain()
 		3, 2, 1
 	};
 
-	load(vertices, indices, sizeof(vertices), sizeof(indices));
+    RenderGeometry::load(vertices, indices, sizeof(vertices), sizeof(indices));
 }
 
 Plain::Plain(const QJsonArray& pos, const QJsonArray& rot, const QJsonArray& scl) : Plain()

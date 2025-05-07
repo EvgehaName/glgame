@@ -6,6 +6,8 @@
 #include "render/debugrenderer.h"
 #include "dynamics/collision/collision_base.h"
 
+constexpr const char* UNTITLED_PROJECT_NAME = "Untitled Project";
+
 class Level
 {
 public:
@@ -24,7 +26,13 @@ public:
     void add_collision_object(Collision* collision_ptr);
     QMatrix4x4 getViewProjection() const;
 
+    bool load(const QString& filepath);
+    void load(const QJsonObject& config);
     void onLevelLoaded();
+
+    /* EDITOR MODE ONLY */
+    inline void setTreeItem(QTreeWidgetItem* item) { m_rootItem = item; }
+    inline QTreeWidgetItem* treeItem() const { return m_rootItem; }
 
 private:
 	std::vector<GameObject*> m_objects;
@@ -40,4 +48,7 @@ private:
 	QOpenGLTexture* m_wallTexture;
 	QOpenGLTexture* m_floorTexture;
 	QOpenGLShaderProgram* m_shader;
+
+    /* EDITOR MODE ONLY */
+    QTreeWidgetItem* m_rootItem{nullptr};
 };

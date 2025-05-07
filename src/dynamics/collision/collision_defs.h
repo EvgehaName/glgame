@@ -12,8 +12,7 @@ enum class ECollisionType {
     CollisionTypeCapsule
 };
 
-constexpr int collisionTypeInt(ECollisionType type) {
-    return static_cast<int>(type);
-}
+int collisionTypeInt(ECollisionType type);
+ECollisionType intToCollisionType(int type);
 
 #endif // COLLISION_DEFS_H

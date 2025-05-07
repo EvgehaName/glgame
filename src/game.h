@@ -21,14 +21,14 @@
 #include "dynamics/physics_world.h"
 #include "core/audio_loader.h"
 
-class Application;
+class Engine;
 
 class Game : public QOpenGLWidget, protected QOpenGLFunctions_4_3_Core
 {
     Q_OBJECT
 
 public:
-    Game(Application * application, QWidget *parent = nullptr);
+    Game(Engine * application, QWidget *parent = nullptr);
     ~Game();
 
     inline void setLevel(Level* level) { m_level = level; }
@@ -41,7 +41,7 @@ protected:
     void paintGL() override;
 
 private:
-    Application * m_application;
+    Engine * m_application;
     QOpenGLDebugLogger* m_openglLogger{ nullptr };
     Level* m_level;
 
