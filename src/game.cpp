@@ -164,12 +164,20 @@ void Game::setup()
         audioSound->play(false);
     });
 
+    m_consoleWidget->registerCommand("freecam", [&](const CCommand& cmd) {
+        m_level->actor()->changeCamera(m_level->actor()->camFree);
+    });
+
+    m_consoleWidget->registerCommand("playercam", [&](const CCommand& cmd) {
+        m_level->actor()->changeCamera(m_level->actor()->camFirst);
+    });
+
     /* Initialize */
     Engine::get();
 
    //m_level = new Level();
 
-    audioLoader = new AudioLoader("D:\\Projects\\glgame\\src\\sound\\step.ogg");
+    audioLoader = new AudioLoader("/home/piok/projects/glgame/src/sound/step.ogg");
     audioSound = new AudioSound(audioLoader->getPCM(), audioLoader->getFormat(), audioLoader->getSampleRate());
 
     // m_dbgRender = new DebugRenderer();
@@ -218,11 +226,11 @@ void Game::closeEvent(QCloseEvent *event)
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
-    int key = event->nativeVirtualKey();
+    int key = event->key();
     qDebug() << key;
 
     /* Скрытие или показ окна консоли */
-    if (key == Qt::Key_Agrave) {
+    if (key == Qt::Key_QuoteLeft) {
         if (m_consoleWidget->isHidden()) {
             m_consoleWidget->show();
         } else {
@@ -261,7 +269,7 @@ void Game::keyPressEvent(QKeyEvent *event)
 
 void Game::keyReleaseEvent(QKeyEvent *event)
 {
-    int key = event->nativeVirtualKey();
+    int key = event->key();
 
     if (key == Qt::Key_W && !event->isAutoRepeat()) {
         m_movementState.m_forward = false;

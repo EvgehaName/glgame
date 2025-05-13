@@ -13,8 +13,9 @@ Actor::Actor(Level* level)
 {
     QString setpath = QApplication::applicationDirPath() + "/config.ini";
     QSettings settings(setpath, QSettings::NativeFormat);
+    m_cameras[camFirst] = new FPSCamera();
+    m_cameras[camFree] = new FREECamera();
     m_cameras[camFirst]->loadSection("actor_cam", settings);
-    m_cameras[camFree]->loadSection("actor_free_cam", settings);
     activeCam = camFirst;
 
     m_collision = new collision::collision_object(Engine::get().space(), 0.1, 0.5);
@@ -49,23 +50,32 @@ void Actor::onAction(const MovementState& state, float deltaTime)
     vAccel.normalize();
 
     QMatrix4x4 R;
-    R.setToIdentity();
-    R.rotate(qRadiansToDegrees(m_cameras[activeCam]->yaw()), {0.0f, 1.0f, 0.0f});
+        R.setToIdentity();
+        R.rotate(qRadiansToDegrees(m_cameras[activeCam]->yaw()), {0.0f, 1.0f, 0.0f});
 
-#if QT_VERSION >= 0x060000
-    vAccel = R.map(vAccel);
-#else
-    vAccel = R * vAccel;
-#endif
+        #if QT_VERSION >= 0x060000
+            vAccel = R.map(vAccel);
+        #else
+            vAccel = R * vAccel;
+        #endif
 
     QVector3D new_position = m_position + (vAccel * speed * deltaTime);
     m_collision->set_position(new_position);
 
-    if (!m_level->check_collide(m_collision)) {
-        m_position += vAccel * speed * deltaTime;
+    if(activeCam == CamStyle::camFirst)
+    {
+        if (!m_level->check_collide(m_collision)) {
+            m_position += vAccel * speed * deltaTime;
+            m_position_freecam += vAccel * speed * deltaTime;
+        }
+        else {
+            m_collision->set_position(m_position);
+        }
     }
-    else {
-        m_collision->set_position(m_position);
+    else
+    {
+        m_position += vAccel * speed * deltaTime;
+        m_position_freecam += vAccel * speed * deltaTime;
     }
 }
 
@@ -92,12 +102,18 @@ void Actor::onRotate(int dx, int dy)
 
 void Actor::update()
 {
-    m_cameras[activeCam]->update(m_position);
+    // if(activeCam == CamStyle::camFree)
+    //     m_cameras[activeCam]->update(m_position_freecam);
+    // else
+    //     m_cameras[activeCam]->update(m_position);
+
+    m_cameras[CamStyle::camFirst]->update(m_position);
+    m_cameras[CamStyle::camFree]->update(m_position_freecam);
 }
 
-void Actor::changeCamera(CameraBase& activeCamera)
+void Actor::changeCamera(CamStyle activeCamera)
 {
-    if(activeCamera)
+    activeCam = activeCamera;
 }
 
 CameraBase *Actor::camera()

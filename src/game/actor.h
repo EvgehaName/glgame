@@ -2,6 +2,7 @@
 #define ACTOR_H
 
 #include "fpscamera.h"
+#include "freecamera.h"
 
 namespace collision {
     class collision_object;
@@ -22,7 +23,7 @@ public:
     void onAction(const MovementState& state, float deltaTime);
     void onRotate(int dx, int dy);
     void update();
-    void changeCamera(CameraBase& activeCamera);
+    void changeCamera(Actor::CamStyle activeCamera);
 
     CameraBase * camera();
 
@@ -41,7 +42,7 @@ private:
     Level* m_level;
     collision::collision_object* m_collision;
     QVector3D m_position;
-    FPSCamera m_camera;
+    QVector3D m_position_freecam;
 
     CameraBase* m_cameras[camMaxElem];
     int activeCam = 0;

@@ -1,8 +1,8 @@
 #include "freecamera.h"
 
-FreeCamera::FreeCamera() {}
+FREECamera::FREECamera() {}
 
-QMatrix4x4 FreeCamera::viewMatrix()
+QMatrix4x4 FREECamera::viewMatrix()
 {
     QMatrix4x4 m;
     m.setToIdentity();
@@ -11,7 +11,7 @@ QMatrix4x4 FreeCamera::viewMatrix()
     return m;
 }
 
-void FreeCamera::update(const QVector3D &position)
+void FREECamera::update(const QVector3D &position)
 {
     m_vPosition = position;
 
@@ -25,18 +25,18 @@ void FreeCamera::update(const QVector3D &position)
     m_vUp        = M.column(1).toVector3D();
 }
 
-void FreeCamera::moveCamera(EInputScreenDirection direction, float dFactor, float deltaTime)
+void FREECamera::moveCamera(EInputScreenDirection direction, float dFactor, float deltaTime)
 {
-    if (m_bClampPitch)
-    {
-        while (m_fPitch < m_vLimPitch.x()) {
-            m_fPitch += M_2PI;
-        }
+    // if (m_bClampPitch)
+    // {
+    //     while (m_fPitch < m_vLimPitch.x()) {
+    //         m_fPitch += M_2PI;
+    //     }
 
-        while (m_fPitch > m_vLimPitch.y()) {
-            m_fPitch -= M_2PI;
-        }
-    };
+    //     while (m_fPitch > m_vLimPitch.y()) {
+    //         m_fPitch -= M_2PI;
+    //     }
+    // };
 
     switch (direction) {
         case EInputScreenDirection::Right:
@@ -53,11 +53,12 @@ void FreeCamera::moveCamera(EInputScreenDirection direction, float dFactor, floa
             break;
     }
 
-    if (m_bClampYaw) {
-        m_fYaw = std::clamp(m_fYaw, m_vLimYaw.x(), m_vLimYaw.y());
-    }
 
-    if (m_bClampPitch) {
-        m_fPitch = std::clamp(m_fPitch, m_vLimPitch.x(), m_vLimPitch.y());
-    }
+    // if (m_bClampYaw) {
+    //     m_fYaw = std::clamp(m_fYaw, m_vLimYaw.x(), m_vLimYaw.y());
+    // }
+
+    // if (m_bClampPitch) {
+    //     m_fPitch = std::clamp(m_fPitch, m_vLimPitch.x(), m_vLimPitch.y());
+    // }
 }

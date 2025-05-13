@@ -1,11 +1,11 @@
-#ifndef FPSCAMERA_H
-#define FPSCAMERA_H
+#ifndef FREECAMERA_H
+#define FREECAMERA_H
 #include "camerabase.h"
 
-class FreeCamera : public CameraBase
+class FREECamera : public CameraBase
 {
 public:
-    FreeCamera();
+    FREECamera();
 
     QMatrix4x4 viewMatrix() override;
     virtual void update(const QVector3D& position) override;
