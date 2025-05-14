@@ -16,27 +16,43 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <widget class="QTreeWidget" name="projectWidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <attribute name="headerVisible">
-       <bool>true</bool>
-      </attribute>
-      <column>
-       <property name="text">
-        <string>Project</string>
-       </property>
-      </column>
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <property name="text">
-        <string>Create new or load existing</string>
-       </property>
+       <widget class="QTreeWidget" name="projectWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <column>
+         <property name="text">
+          <string>Project</string>
+         </property>
+        </column>
+        <item>
+         <property name="text">
+          <string>Create new or load existing</string>
+         </property>
+        </item>
+       </widget>
       </item>
-     </widget>
+      <item>
+       <widget class="InspectorWidget" name="inspectorWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="QTabWidget" name="sceneTabWidget">
@@ -235,6 +251,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>InspectorWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>editor/inspector_widget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="editor.qrc"/>
  </resources>

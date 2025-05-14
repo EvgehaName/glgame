@@ -32,6 +32,7 @@ Engine::Engine(bool editorMode)
     {
         m_editor_ui = new Ui::Editor;
         m_editor_ui->setupUi(this);
+        m_editor_ui->inspectorWidget->init(m_editor_ui->projectWidget);
 
         m_game = new Game(this, m_editor_ui->openGLWidget->parentWidget());
         m_game->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

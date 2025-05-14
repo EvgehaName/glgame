@@ -30,7 +30,8 @@ GameObject::GameObject(const QJsonArray& pos, const QJsonArray& rot, const QJson
 
 void GameObject::load(const QJsonObject &config)
 {
-    m_treeItem = new QTreeWidgetItem();
+    auto item = new QTreeWidgetItem;
+    setTreeItem(item);
 
     QString name = config["name"].toString();
     setName(name);
@@ -96,4 +97,18 @@ const QMatrix4x4& GameObject::getModelMatrix() const
     }
 
     return m_modelMatrix;
+}
+
+void GameObject::setTreeItem(QTreeWidgetItem *item)
+{
+    if (!item) {
+        return;
+    }
+
+
+    /* Сохраним указатель на элемент дерева */
+    m_treeItem = item;
+
+    /* Сохраним указатель на себя в элемент дерева */
+    m_treeItem->setData(0, Qt::UserRole, QVariant::fromValue<GameObject*>(this));
 }

@@ -31,7 +31,7 @@ public:
     const QMatrix4x4& getModelMatrix() const;
 
     /* EDITOR MODE ONLY */
-    inline void setTreeItem(QTreeWidgetItem* item) { m_treeItem = item; }
+    void setTreeItem(QTreeWidgetItem* item);
     QTreeWidgetItem* treeItem() const { return m_treeItem; }
 
 protected:
@@ -49,3 +49,4 @@ protected:
     /* EDITOR MODE ONLY */
     QTreeWidgetItem* m_treeItem{nullptr};
 };
+Q_DECLARE_METATYPE(GameObject*)
