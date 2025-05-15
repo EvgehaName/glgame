@@ -16,93 +16,113 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QTreeWidget" name="projectWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <column>
-         <property name="text">
-          <string>Project</string>
-         </property>
-        </column>
-        <item>
-         <property name="text">
-          <string>Create new or load existing</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="InspectorWidget" name="inspectorWidget">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <column>
-         <property name="text">
-          <string notr="true">1</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QTabWidget" name="sceneTabWidget">
-      <property name="currentIndex">
-       <number>0</number>
+     <widget class="QSplitter" name="sideSplitter">
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
-      <widget class="QWidget" name="sceneTab">
-       <attribute name="title">
-        <string>Scene View</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="opaqueResize">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="">
+       <layout class="QVBoxLayout" name="leftSideLayout" stretch="0,0">
         <item>
-         <layout class="QVBoxLayout" name="sceneVerticalLayout">
-          <property name="spacing">
+         <widget class="QTreeWidget" name="projectWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <column>
+           <property name="text">
+            <string>Project</string>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>Create new or load existing</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="InspectorWidget" name="inspectorWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <column>
+           <property name="text">
+            <string notr="true">Inspector</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="horizontalLayoutWidget">
+       <layout class="QHBoxLayout" name="rightSideLayout" stretch="0">
+        <item>
+         <widget class="QTabWidget" name="sceneTabWidget">
+          <property name="minimumSize">
+           <size>
+            <width>540</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="currentIndex">
            <number>0</number>
           </property>
-          <item>
-           <widget class="QToolBar" name="sceneToolBar">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="windowTitle">
-             <string>toolBar</string>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>16</width>
-              <height>16</height>
-             </size>
-            </property>
-            <addaction name="select_none"/>
-            <addaction name="select_traslate"/>
-            <addaction name="select_scale"/>
-            <addaction name="select_rotate"/>
-           </widget>
-          </item>
-          <item>
-           <widget class="QOpenGLWidget" name="openGLWidget">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-         </layout>
+          <widget class="QWidget" name="sceneTab">
+           <attribute name="title">
+            <string>Scene View</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <layout class="QVBoxLayout" name="sceneVerticalLayout">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QToolBar" name="sceneToolBar">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="windowTitle">
+                 <string>toolBar</string>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+                <addaction name="select_none"/>
+                <addaction name="select_traslate"/>
+                <addaction name="select_scale"/>
+                <addaction name="select_rotate"/>
+               </widget>
+              </item>
+              <item>
+               <widget class="QOpenGLWidget" name="openGLWidget">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </widget>
         </item>
        </layout>
       </widget>
